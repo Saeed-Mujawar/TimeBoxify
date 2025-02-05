@@ -1,0 +1,156 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.calendar-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.calendar-table th, .calendar-table td {
+  border: 1px solid #ddd;
+  padding: 20px;
+  text-align: center;
+  vertical-align: top;
+  overflow: hidden;
+}
+
+.calendar-table th {
+  background-color: #f0f0f0;
+  font-weight: bold;
+}
+
+.task {
+  background-color: #f1f1f1;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: move;
+  flex-direction: column;
+}
+
+.task-text {
+  display: inline-block;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.task-text.expanded {
+  white-space: normal;
+  overflow: visible;
+}
+
+
+.delete-btn {
+  visibility: hidden;
+  transition: visibility 0.3s ease;
+}
+
+.task:active {
+  cursor: grabbing;
+}
+
+.task:hover .delete-btn {
+  visibility: visible;
+}
+
+.task:hover {
+  background-color: #e0e0e0;
+}
+
+.droppable {
+  min-height: 150px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  padding: 10px;
+  transition: background-color 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow-y: auto;  /* Add scrollbar for tasks in the droppable area */
+}
+
+.time-slot {
+  padding: 10px;
+  text-align: center;
+  background-color: #f9f9f9;
+}
+
+button, .ant-btn {
+  margin-left: 10px;
+}
+
+button:hover {
+  background-color: #ff4d4d;
+}
+
+/* Prioritization */
+.prioritization {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.priority-box {
+  flex: 1;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  min-width: 200px;
+  cursor: pointer;
+  overflow-y: auto; /* Scroll in the prioritization zone if needed */
+}
+
+.priority-box h3 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+/* Backlog Section */
+.task-backlog .backlog-list {
+  max-height: 300px; /* Adjust height to allow scrolling */
+  overflow-y: auto; /* Add vertical scroll */
+}
+
+.task-backlog .task {
+  margin-bottom: 8px;
+}
+
+.task-backlog h2 {
+  background-color: #f1f1f1;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  color: #333;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Expandable Text */
+.task-text:after {
+  content: '...'; /* Indicate more text */
+  color: #888;
+}
+
+.task-text.expanded:after {
+  content: ''; /* Remove "..." when expanded */
+}
