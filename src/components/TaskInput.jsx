@@ -17,7 +17,7 @@ const TaskInput = ({ addTask }) => {
     const toggleExpand = () => setExpanded(!expanded);
 
     return (
-        <div className="task-input" style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+        <div className="task-input" style={{ display: 'flex', justifyContent: 'center', margin: '20px' }}>
             <Input.TextArea
                 value={taskText}
                 onChange={(e) => setTaskText(e.target.value)}

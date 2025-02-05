@@ -4,6 +4,7 @@ import TaskBacklog from './components/TaskBacklog';
 import Prioritization from './components/Prioritization';
 import Calendar from './components/Calendar';
 import './App.css';
+import Navbar from './components/Navbar.tsx';
 
 const App = () => {
   const [tasks, setTasks] = useState([]);
@@ -51,14 +52,25 @@ const App = () => {
     );
   };
 
+  // Update task in the list
+  const updateTaskInList = (taskId, newText) => {
+    setTasks((prevTasks) => {
+      const updatedTasks = prevTasks.map((task) =>
+        task.id === taskId ? { ...task, text: newText } : task
+      );
+      // Update localStorage
+      localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+      return updatedTasks;
+    });
+  };
 
   return (
     <div className="app">
-      <h1>Weekly Timeboxing & Prioritization</h1>
+      <Navbar /> 
       <TaskInput addTask={addTask} />
-      <TaskBacklog tasks={tasks} moveTask={moveTask} deleteTask={deleteTask} />
-      <Prioritization tasks={tasks} moveTask={moveTask} deleteTask={deleteTask} />
-      <Calendar tasks={tasks} moveTask={moveTask} deleteTask={deleteTask} updateTaskDuration={updateTaskDuration}/>
+      <TaskBacklog tasks={tasks} moveTask={moveTask} deleteTask={deleteTask} updateTaskInList={updateTaskInList} />
+      <Prioritization tasks={tasks} moveTask={moveTask} deleteTask={deleteTask} updateTaskInList={updateTaskInList}/>
+      <Calendar tasks={tasks} moveTask={moveTask} deleteTask={deleteTask} updateTaskDuration={updateTaskDuration} updateTaskInList={updateTaskInList}/>
     </div>
   );
 };

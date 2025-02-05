@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Task from './Task';
 
-const TaskBacklog = ({ tasks, moveTask, deleteTask }) => {
+const TaskBacklog = ({ tasks, moveTask, deleteTask, updateTaskInList }) => {
     const backlogTasks = tasks.filter((task) => task.zone === 'backlog');
     const [expandedTaskId, setExpandedTaskId] = useState(null);
     
@@ -32,6 +32,7 @@ const TaskBacklog = ({ tasks, moveTask, deleteTask }) => {
                     deleteTask={deleteTask}
                     toggleExpand={toggleExpand}
                     expanded={expandedTaskId === task.id}
+                    updateTaskInList={updateTaskInList}
                 />
             ))}
         </div>

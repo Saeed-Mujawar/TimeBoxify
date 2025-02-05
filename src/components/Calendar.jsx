@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Task from './Task';  // Import Task component
 
-const Calendar = ({ tasks, moveTask, deleteTask }) => {
+const Calendar = ({ tasks, moveTask, deleteTask, updateTaskInList }) => {
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     const hours = Array.from({ length: 13 }, (_, i) => i + 8); // 8:00 AM to 8:00 PM
     const [expandedTaskId, setExpandedTaskId] = useState(null); // Track expanded task state
@@ -26,7 +26,11 @@ const Calendar = ({ tasks, moveTask, deleteTask }) => {
     };
 
     return (
-        <div className="calendar" style={{ width: '100%', overflowX: 'auto', padding: '10px' }}>
+    <>
+            <h2 className="prioritization-heading">
+            Weekly Task Calendar
+            </h2>
+        <div className="calendar" style={{ width: '98%', overflowX: 'auto', padding: '10px' }}>
             <table className="calendar-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                     <tr style={{ backgroundColor: '#f8f8f8' }}>
@@ -65,8 +69,9 @@ const Calendar = ({ tasks, moveTask, deleteTask }) => {
                                                     key={task.id}
                                                     task={task}
                                                     deleteTask={handleDelete}
-                                                    toggleExpand={() => {}}
+                                                    toggleExpand={() => { }}
                                                     expanded={expandedTaskId === task.id}
+                                                    updateTaskInList={updateTaskInList}
                                                 />
                                             );
                                         })}
@@ -77,6 +82,7 @@ const Calendar = ({ tasks, moveTask, deleteTask }) => {
                 </tbody>
             </table>
         </div>
+        </>
     );
 };
 
