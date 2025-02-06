@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { DeleteOutlined, ExpandOutlined, EditOutlined } from '@ant-design/icons';
 import { Button, Modal, Input } from 'antd';
+import './Task.css'
 
 const Task = ({ task, deleteTask, toggleExpand, expanded, updateTaskInList }) => {
   const [isModalVisible, setIsModalVisible] = useState(false); // State to control modal visibility

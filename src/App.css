@@ -10,217 +10,22 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
-/* Navbar */
-.navbar {
-  background-color: #949494; /* Green background */
-  padding: 15px;
-  text-align:left;
-}
 
-.navbar h1 {
-  color: white;
-  font-size: 22px;
-  margin: 0;
-}
 
-.calendar-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 10px;
-}
 
-.calendar-table th, .calendar-table td {
-  border: 1px solid #ddd;
-  padding: 20px;
-  text-align: center;
-  vertical-align: top;
-  overflow: hidden;
-}
 
-.calendar-table th {
-  background-color: #f0f0f0;
-  font-weight: bold;
-}
 
-/* General task styling */
-.task {
-  background-color: #f1f1f1;
-  padding: 10px;
-  margin: 5px;
-  border-radius: 4px;
-  display: flex;
-  justify-content: space-between; /* Content (left) and buttons (right) */
-  align-items: flex-start;
-  cursor: move;
-  flex-direction: row; /* Align horizontally */
-  width: 80%; /* Full width */
-  box-sizing: border-box; /* Include padding and border in width */
-  position: relative;
-  gap: 10px; /* Space between content and buttons */
-}
 
-/* Task text container */
-.task-text-container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  width: 70%; /* Adjust content width */
-  overflow: hidden; /* Hide overflowed content */
-}
 
-/* Task text style */
-.task-text {
-  max-width: 150px; /* Limit task text width */
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
 
-/* Expanded task text */
-.task-text.expanded {
-  white-space: normal; /* Allow wrapping */
-  overflow: visible;
-}
-
-/* Right side buttons container */
-.delete-btn-container {
-  display: flex;
-  gap: 10px; /* Space between buttons */
-  justify-content: flex-end;
-  align-items: center;
-  width: auto; /* No need for fixed width */
-}
-
-/* Styling for buttons */
-.delete-btn-container button {
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-/* Hover state for tasks */
-.task:hover {
-  background-color: #e0e0e0;
-}
-
-/* Optional: Show buttons when hovering over the task */
-.task:hover .delete-btn-container {
-  display: flex;
-}
-
-/* Droppable area */
-.droppable {
-  min-height: 150px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  padding: 10px;
-  transition: background-color 0.2s, box-shadow 0.2s;
-  position: relative;
-  overflow-y: auto;  /* Enable scrollbar */
-}
-
-/* Time-slot styling */
-.time-slot {
-  padding: 10px;
-  text-align: center;
-  background-color: #f9f9f9;
-}
 
 button, .ant-btn {
   margin-left: 10px;
 }
 
-/* Prioritization */
 
-/* Style for the Task Prioritization heading */
-.prioritization-heading {
-  background-color: #f1f1f1;
-  padding: 10px;
-  border-radius: 5px;
-  font-size: 18px;
-  font-weight: bold;
-  text-align: center;
-  color: #333;
-  margin-bottom: 15px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  grid-column: span 3; /* Ensure it spans all columns */
-}
 
-.prioritization {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  margin: 10px;
-}
 
-.priority-box {
-  flex: 1;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background-color: #fff;
-  min-width: 200px;
-  cursor: pointer;
-  overflow-y: auto; /* Scroll if needed */
-  max-height: 250px;
-}
 
-.priority-box h3 {
-  text-align: center;
-  margin-bottom: 10px;
-  justify-content: center;
-}
 
-/* Backlog Section */
-.task-backlog {
-  background-color: #fff;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 columns */
-  gap: 15px;
-  max-height: 400px;
-  max-width: 100%;
-  overflow-y: auto; /* Enable scrollbar */
-  padding: 10px;
-  border-radius: 0%;
-  border: none;
-}
 
-/* Backlog section header */
-.task-backlog h2 {
-  grid-column: span 3; /* Make heading span all 3 columns */
-  background-color: #f1f1f1;
-  padding: 10px;
-  border-radius: 5px;
-  font-size: 18px;
-  font-weight: bold;
-  text-align: center;
-  color: #333;
-  margin-bottom: 15px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Task text in the backlog */
-.task-backlog .task .task-text {
-  max-width: 150px; /* Reduce width of task text */
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* Styling for task text expansion */
-.task-backlog .task .task-text.expanded {
-  white-space: normal;
-  overflow: visible;
-}
-
-/* Expandable Text */
-.task-text:after {
-  content: '...'; /* Indicate more text */
-  color: #888;
-}
-
-.task-text.expanded:after {
-  content: ''; /* Remove "..." when expanded */
-}

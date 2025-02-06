@@ -1,5 +1,6 @@
 import React from 'react';
 import Task from './Task';
+import './Prioritization.css'
 
 const Prioritization = ({ tasks, moveTask, deleteTask, updateTaskInList }) => {
     const zones = [

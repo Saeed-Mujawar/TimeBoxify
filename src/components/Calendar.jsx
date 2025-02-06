@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Task from './Task'; // Import Task component
 import { Button } from 'antd';
+import './Calendar.css'
 
 const Calendar = ({ tasks, moveTask, deleteTask, updateTaskInList }) => {
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -9,7 +10,7 @@ const Calendar = ({ tasks, moveTask, deleteTask, updateTaskInList }) => {
     const generateWorkHours = (start, end) => {
         const hoursArray = [];
         for (let hour = start; hour < end; hour++) {
-          hoursArray.push(`${hour < 10 ? '0' + hour : hour}:`);
+          hoursArray.push(`${hour < 10 ? '0' + hour : hour} :`);
         }
         return hoursArray;
       };
@@ -49,7 +50,7 @@ const Calendar = ({ tasks, moveTask, deleteTask, updateTaskInList }) => {
 
   return (
     <>
-      <h2 className="prioritization-heading">Weekly Task Calendar</h2>
+      <h2 className="calender-heading">Weekly Task Calendar</h2>
       
       {/* Input fields to set work hours (only hours, no minutes) */}
       <div style={{ marginTop: '20px', marginLeft: '20px' }}>

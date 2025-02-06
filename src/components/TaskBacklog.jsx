@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Task from './Task';
+import './TaskBacklog.css'
 
 const TaskBacklog = ({ tasks, moveTask, deleteTask, updateTaskInList }) => {
     const backlogTasks = tasks.filter((task) => task.zone === 'backlog');
@@ -24,7 +25,7 @@ const TaskBacklog = ({ tasks, moveTask, deleteTask, updateTaskInList }) => {
             onDragOver={(e) => e.preventDefault()}
             onDrop={handleDrop}           
         >
-            <h2>Task Backlog</h2>
+            <h2 className="prioritization-heading">Task Backlog</h2>
             {backlogTasks.map((task) => (
                 <Task
                     key={task.id}

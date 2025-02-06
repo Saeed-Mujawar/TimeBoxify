@@ -39,9 +39,12 @@ const App = () => {
     );
   }, []);
 
-  // Delete task from the list
   const deleteTask = useCallback((taskId) => {
-    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+    setTasks((prevTasks) => {
+      const updatedTasks = prevTasks.filter((task) => task.id !== taskId);
+      localStorage.setItem('tasks', JSON.stringify(updatedTasks)); // Update localStorage after deletion
+      return updatedTasks;
+    });
   }, []);
 
   const updateTaskDuration = (taskId, newDuration) => {

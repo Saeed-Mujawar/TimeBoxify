@@ -1,0 +1,40 @@
+/* Prioritization */
+
+/* Style for the Task Prioritization heading */
+.prioritization-heading {
+    grid-column: span 3; /* Ensure it spans all columns */
+    background-color: #f1f1f1;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    color: #333;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .prioritization {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 10px;
+  }
+  
+  .priority-box {
+    flex: 1;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    min-width: 200px;
+    cursor: pointer;
+    overflow-y: auto; /* Scroll if needed */
+    max-height: 250px;
+  }
+  
+  .priority-box h3 {
+    text-align: center;
+    margin-bottom: 10px;
+    justify-content: center;
+  }
