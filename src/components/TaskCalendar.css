@@ -1,0 +1,101 @@
+/* General styles */
+.calendar-container {
+  padding: 20px;
+  max-width: 100%;
+  width: 100%;  margin: 0 auto;
+  max-height: 100%;
+  height: 100%;
+  font-family: Arial, sans-serif;
+}
+
+.calendar-wrapper {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  
+}
+
+/* Working hours section */
+.working-hours-container {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.working-hours-label {
+  font-size: 16px;
+  color: #555;
+  margin-right: 10px;
+}
+
+.working-hours-inputs {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.working-hours-input {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 60px;
+  text-align: center;
+}
+
+.working-hours-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.working-hours-separator {
+  color: #777;
+}
+
+/* Calendar event styles */
+.rbc-event {
+  padding: 4px 8px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.rbc-event-content {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Calendar header styles */
+.rbc-header {
+  color: #fff;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  align-items: center;
+  align-content: center;
+}
+
+.rbc-today {
+  background-color: #e6f7ff;
+}
+
+/* Time slot styles */
+.rbc-time-content {
+  background: #f9f9f9;
+}
+
+.rbc-time-gutter {
+  font-size: 14px;
+  color: #555;
+}
+
+/* Button styles */
+.rbc-button-link {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.rbc-button-link:hover {
+  text-decoration: underline;
+}
