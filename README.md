@@ -172,3 +172,65 @@ const App = () => {
 };
 
 export default App;
+
+
+
+  
+  const handleDrop = (e, priority) => {
+    e.preventDefault();
+    const eventId = e.dataTransfer.getData("eventId");
+    const updatedEvents = initialEvents.map((event) =>
+      event.id === eventId ? { ...event, priority } : event
+    );
+    updateLocalStorage(updatedEvents);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const priorities = [
+    { level: "high", color: "rgb(255, 125, 125)" },
+    { level: "medium", color: "rgb(127, 248, 67)" },
+    { level: "low", color: "rgb(138, 138, 255)" },
+  ];
+
+  const sortedEvents = priorities.map((priority) => ({
+    ...priority,
+    events: initialEvents.filter((event) => event.priority === priority.level),
+  }));
+
+  return (
+    <div className="external-events-container">
+      <h3 className="external-events-title">Backlog Task Prioritization</h3>
+      <div className="external-events">
+        {sortedEvents.map((priority) => (
+          <div
+            key={priority.level}
+            className="priority-column"
+            style={{ backgroundColor: priority.color }}
+            onDrop={(e) => handleDrop(e, priority.level)}
+            onDragOver={handleDragOver}
+          >
+            <h4 className="priority-headings">{priority.level.toUpperCase()}</h4>
+            {priority.events.length === 0 ? (
+              <Empty style description="No Task" />
+            ) : (
+              priority.events.map((event) => (
+                <div
+                  key={event.id}
+                  draggable
+                  onDragStart={(e) => {
+                    e.dataTransfer.setData("eventId", event.id);
+                    onDragStart(e, event);
+                  }}
+                  className="external-event"
+                  onClick={() => handleOpenModal(event)}
+                >
+                  {event.title}
+                </div>
+              ))
+            )}
+          </div>
+        ))}
+      </div>

@@ -17,6 +17,7 @@
     border: 1px solid rgb(202, 202, 202);
     border-radius: 5px;
     /* Rounded corners for the input */
+    height: 300px;
 }
 
 .task-input,

@@ -4,7 +4,6 @@
   width: 50%;
   background: #ffffff;
   border-radius: 4px;
-  margin-bottom: 20px;
 }
 
 /* Style for the title */
@@ -26,9 +25,11 @@
 /* Style for the container holding the events */
 .external-events {
    padding: 10px;
+   /* margin: 10px; */
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* Create 3 equal columns */
   gap: 10px; /* Add spacing between columns */
+
 }
 
 /* Style for each event in the external events section */
@@ -45,8 +46,32 @@
 .external-events .ant-empty {
   justify-content: center; /* Center horizontally */
   align-items: center; /* Center vertically */
-  height: 100%; /* Ensure it takes up the full height of the container */
+  /* height: 100%; Ensure it takes up the full height of the container */
   text-align: center;
   grid-column: span 3;
 }
 
+/* Style for each priority column */
+.priority-column {
+  flex: 1;
+  padding: 10px;
+  border-radius: 4px;
+  min-height: 245px;
+  overflow-y: auto;
+  max-height: 200px;
+}
+
+.priority-headings {
+  display: flex;
+  justify-content: center;
+  margin-top: 5px;
+  color: white; /* Set text color to white */
+}
+
+.priority-column .ant-empty-description {
+  color: white;
+}
+
+.external-event:active {
+  cursor: grabbing;
+}

@@ -102,9 +102,14 @@ const TaskCalendar = () => {
     };
 
     setEvents((prevEvents) => [...prevEvents, newEvent]);
-    // Remove the event from backlog after successful drop
-    setBackLogEvents((prevBacklog) => prevBacklog.filter((event) => event.id !== eventData.id));
 
+    // Remove the event from backlog and update localStorage
+    setBackLogEvents((prevBacklog) => {
+      const updatedBacklog = prevBacklog.filter((event) => event.id !== eventData.id);
+      localStorage.setItem("backlogEvents", JSON.stringify(updatedBacklog)); // Sync immediately
+      return updatedBacklog;
+    });
+  
     notification.success({
       message: "Event Added",
       description: `The event "${eventData.title}" was successfully added to the calendar.`,

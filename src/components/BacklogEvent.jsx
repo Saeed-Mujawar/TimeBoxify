@@ -49,26 +49,69 @@ const BacklogEvent = ({ events: initialEvents, onDragStart, setEvents }) => {
     localStorage.setItem("backlogEvents", JSON.stringify(newEvents));
   };
   
+  
+  const handleDrop = (e, priority) => {
+    e.preventDefault();
+    const eventId = e.dataTransfer.getData("eventId"); 
+  
+    // Convert eventId to a number for comparison
+    const numericEventId = Number(eventId);
+  
+    const updatedEvents = initialEvents.map((event) => {
+      return event.id === numericEventId ? { ...event, priority } : event;
+    });
+
+    updateLocalStorage(updatedEvents);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const priorities = [
+    { level: "high", color: "rgb(255, 125, 125)" },
+    { level: "medium", color: " rgb(250, 173, 20)" },
+    { level: "low", color: "rgb(127, 248, 67)" },
+  ];
+
+  const sortedEvents = priorities.map((priority) => ({
+    ...priority,
+    events: initialEvents.filter((event) => event.priority === priority.level),
+  }));
 
   return (
     <div className="external-events-container">
       <h3 className="external-events-title">Backlog Task Prioritization</h3>
       <div className="external-events">
-        {initialEvents.length === 0 ? (
-          <Empty description="No Data" />
-        ) : (
-          initialEvents.map((event) => (
-            <div
-              key={event.id}
-              draggable
-              onDragStart={(e) => onDragStart(e, event)}
-              className="external-event"
-              onClick={() => handleOpenModal(event)}
-            >
-              {event.title}
-            </div>
-          ))
-        )}
+        {sortedEvents.map((priority) => (
+          <div
+            key={priority.level}
+            className="priority-column"
+            style={{ backgroundColor: priority.color }}
+            onDrop={(e) => handleDrop(e, priority.level)}
+            onDragOver={handleDragOver}
+          >
+            <h4 className="priority-headings">{priority.level.toUpperCase()}</h4>
+            {priority.events.length === 0 ? (
+              <Empty style description="No Task" />
+            ) : (
+              priority.events.map((event) => (
+                <div
+                  key={event.id}
+                  draggable
+                  onDragStart={(e) => {
+                    e.dataTransfer.setData("eventId", event.id);
+                    onDragStart(e, event);
+                  }}
+                  className="external-event"
+                  onClick={() => handleOpenModal(event)}
+                >
+                  {event.title}
+                </div>
+              ))
+            )}
+          </div>
+        ))}
       </div>
 
       {selectedEvent && (
