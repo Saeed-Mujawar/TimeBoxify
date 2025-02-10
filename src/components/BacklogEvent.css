@@ -1,0 +1,52 @@
+/* Wrapper container to hold both the title and events */
+.external-events-container {
+  max-width: 100%;
+  width: 50%;
+  background: #ffffff;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+/* Style for the title */
+.external-events-title {
+  grid-column: span 3; /* Ensure it spans all columns */
+  background-color: #f1f1f1;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  margin: 0px;
+  color: #333;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+}
+
+/* Style for the container holding the events */
+.external-events {
+   padding: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Create 3 equal columns */
+  gap: 10px; /* Add spacing between columns */
+}
+
+/* Style for each event in the external events section */
+.external-event {
+  padding: 8px;
+  margin: 5px 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: grab;
+  text-align: center; /* Center text inside each event */
+}
+
+.external-events .ant-empty {
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  height: 100%; /* Ensure it takes up the full height of the container */
+  text-align: center;
+  grid-column: span 3;
+}
+

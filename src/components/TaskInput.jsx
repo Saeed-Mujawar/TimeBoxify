@@ -1,35 +1,54 @@
-import React, { useState } from 'react';
-import { Input, Button } from 'antd';
+import React, { useState } from "react";
+import { Select, Input, Button } from "antd";
+import "./TaskInput.css";
 
-const TaskInput = ({ addTask }) => {
-    const [taskText, setTaskText] = useState('');
-    const [expanded, setExpanded] = useState(false);
+const { Option } = Select;
 
-    // Handle adding a task and updating localStorage
+const TaskInput = ({ onAddTask }) => {
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");  // State for description
+    const [priority, setPriority] = useState("low");
+
     const handleAddTask = () => {
-        if (taskText.trim()) {
-            addTask(taskText.trim()); // Add task to the tasks array
-            setTaskText(''); // Reset the input field
+        if (title.trim()) {
+            onAddTask({ title, description, priority, id: Date.now() });
+            setTitle("");
+            setDescription("");  // Clear description after adding the task
+            setPriority("low");
         }
     };
 
-    // Toggle the expanded state for text area
-    const toggleExpand = () => setExpanded(!expanded);
-
     return (
-        <div className="task-input" style={{ display: 'flex', justifyContent: 'center', margin: '20px' }}>
-            <Input.TextArea
-                value={taskText}
-                onChange={(e) => setTaskText(e.target.value)}
-                placeholder="Enter a new task"
-                rows={expanded ? 6 : 4} // Toggle between expanded and normal size
-                style={{ width: '500px', marginRight: '10px', resize: 'none' }}
+        <div className="task-input-container">
+            <Input
+                placeholder="Task Title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="task-input"
             />
-            <Button type="primary" onClick={handleAddTask}>
-                Add Task
-            </Button>
+            <Input.TextArea  // Description field
+                placeholder="Task Description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="task-description-input"
+                rows={4}  // Set the number of visible rows for the textarea
+            />
+            <div className="task-select-button-container"> {/*  Wrap Select and Button in this div */}
+                <Select
+                    value={priority}
+                    onChange={setPriority}
+                    className="task-priority-select"
+                >
+                    <Option value="low">Low</Option>
+                    <Option value="medium">Medium</Option>
+                    <Option value="high">High</Option>
+                </Select>
+                <Button type="primary" onClick={handleAddTask}>
+                    Add Task
+                </Button>
+            </div>
         </div>
     );
 };
 
-export default React.memo(TaskInput);
+export default TaskInput;

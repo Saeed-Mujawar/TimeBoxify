@@ -1,70 +1,174 @@
-# Getting Started with Create React App
+import React, { useState, useEffect, useCallback } from 'react';
+import TaskInput from './components/TaskInput';
+import TaskBacklog from './components/TaskBacklog';
+import Prioritization from './components/Prioritization';
+import Calendar from './components/Calendar';
+import Navbar from './components/Navbar.tsx';
+import { ScheduleXCalendar, useCalendarApp } from '@schedule-x/react';
+import { createViewWeek, createViewMonthGrid } from '@schedule-x/calendar';
+import '@schedule-x/theme-default/dist/index.css';
+import { createDragAndDropPlugin } from '@schedule-x/drag-and-drop';
+import { createEventModalPlugin } from '@schedule-x/event-modal';
+import { createResizePlugin } from '@schedule-x/resize';
+import './App.css';
+import { createEventsServicePlugin } from '@schedule-x/events-service';
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+const App = () => {
+  // Sample events array
+  const sampleEvents = [
+    {
+      id: 1,
+      title: 'Team Meeting',
+      start: '2025-03-03 10:00',
+      end: '2025-03-03 11:00',
+      description: 'Discuss project status and upcoming deadlines',
+    },
+    {
+      id: 2,
+      title: 'Code Review',
+      start: '2025-03-04 14:00',
+      end: '2025-03-04 15:00',
+      description: 'Review pull requests and provide feedback',
+    },
+    {
+      id: 3,
+      title: 'Client Presentation',
+      start: '2025-03-05 09:00',
+      end: '2025-03-05 10:30',
+      description: 'Present the latest product demo to the client',
+      
+    },
+    {
+      id: 4,
+      title: 'Sprint Planning',
+      start: '2025-03-06 13:00',
+      end: '2025-03-06 14:00',
+      description: 'Plan the next sprint tasks and milestones',
+    },
+    {
+      id: 5,
+      title: 'Lunch Break',
+      start: '2025-03-03 12:00',
+      end: '2025-03-03 13:00',
+      description: 'Take a break and have lunch',
+    },
+  ];
 
-## Available Scripts
+  // Initialize the calendar app
+  const calendar = useCalendarApp({
+    views: [
+      createViewWeek(),
+      createViewMonthGrid(),
+    ],
+    events: sampleEvents,  // Pass the sample events to the calendar
+    // selectedDate: '2025-03-03',
+    plugins: [
+      createDragAndDropPlugin(),
+      createEventModalPlugin(),
+      createResizePlugin(),
+      createEventsServicePlugin(),
+    ],
+  });
 
-In the project directory, you can run:
 
-### `npm start`
+  const [tasks, setTasks] = useState([]);
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+  useEffect(() => {
+    const savedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    setTasks(savedTasks);
+  }, []);
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+  useEffect(() => {
+    if (tasks.length > 0) {
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+  }, [tasks]);
 
-### `npm test`
+  const addTask = useCallback((taskText) => {
+    setTasks((prevTasks) => [
+      ...prevTasks,
+      { id: Date.now(), text: taskText, zone: 'backlog' },
+    ]);
+  }, []);
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+  const moveTask = useCallback((taskId, newZone) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === taskId ? { ...task, zone: newZone } : task
+      )
+    );
+  }, []);
 
-### `npm run build`
+  const deleteTask = useCallback((taskId) => {
+    setTasks((prevTasks) => {
+      const updatedTasks = prevTasks.filter((task) => task.id !== taskId);
+      localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+      return updatedTasks;
+    });
+  }, []);
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+  const updateTaskDuration = (taskId, newDuration) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === taskId ? { ...task, duration: newDuration } : task
+      )
+    );
+  };
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+  const updateTaskInList = (taskId, newText) => {
+    setTasks((prevTasks) => {
+      const updatedTasks = prevTasks.map((task) =>
+        task.id === taskId ? { ...task, text: newText } : task
+      );
+      localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+      return updatedTasks;
+    });
+  };
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+  const handleCalendarDrop = (e) => {
+    e.preventDefault();
+    const taskId = parseInt(e.dataTransfer.getData('taskId'), 10);
+    const taskText = e.dataTransfer.getData('taskText');
+    const date = e.target.getAttribute('data-date');
 
-### `npm run eject`
+    if (taskId && date) {
+      const newEvent = {
+        id: taskId,
+        title: taskText,
+        start: `${date}T00:00`,
+        end: `${date}T01:00`,
+        description: taskText,
+      };
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+      calendar.events.add(newEvent);
+      moveTask(taskId, 'calendar');
+    }
+  };
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+  return (
+    <div className="app">
+      <Navbar />
+      <TaskInput addTask={addTask} />
+      <TaskBacklog
+        tasks={tasks}
+        moveTask={moveTask}
+        deleteTask={deleteTask}
+        updateTaskInList={updateTaskInList}
+      />
+      <Prioritization
+        tasks={tasks}
+        moveTask={moveTask}
+        deleteTask={deleteTask}
+        updateTaskInList={updateTaskInList}
+      />
+      <div
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={handleCalendarDrop}
+      >
+        <ScheduleXCalendar calendarApp={calendar} />
+      </div>
+    </div>
+  );
+};
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+export default App;

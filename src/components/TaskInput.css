@@ -1,0 +1,109 @@
+/* TaskInput.css */
+
+.task-input-container {
+    max-width: 100%;
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+    /* Stack title and description vertically */
+    align-items: stretch;
+    /* Ensure items stretch to full width */
+    padding: 15px 20px;
+    /* Padding around the input area */
+    background-color: #ffffff;
+    /* Light grey background for the container */
+    gap: 15px;
+    /* Spacing between elements */
+    border: 1px solid rgb(202, 202, 202);
+    border-radius: 5px;
+    /* Rounded corners for the input */
+}
+
+.task-input,
+.task-description-input {
+    padding: 10px 12px;
+    /* Padding inside the input fields */
+    border: 1px solid #ccc;
+    /* Border for the input */
+    border-radius: 4px;
+    /* Rounded corners */
+    font-size: 14px;
+    /* Readable font size */
+}
+
+.task-input:focus,
+.task-description-input:focus {
+    outline: none;
+    /* Remove default focus outline */
+    border-color: #007bff;
+    /* Blue border on focus */
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+    /* Subtle blue shadow */
+}
+
+/* Description Input */
+.task-description-input {
+    resize: vertical;
+    /* Allow resizing the description area vertically */
+    height: 100px;
+    /* Set a fixed height, but allow resizing */
+}
+
+/* Align select and button in one row */
+.task-select-button-container {
+    display: flex;
+    justify-content:space-between;
+    /* Space out select and button */
+    gap: 10px;
+    /* Space between select and button */
+}
+
+.task-priority-select {
+    width: 100%;
+    /* Make the select take up available space */
+    max-width: 280px;
+    /* Maximum width */
+    height: auto;
+}
+
+.task-priority-select .ant-select-selector {
+    padding: 8px 12px;
+    /* Adjust padding inside the select box */
+    border-radius: 4px;
+    /* Rounded corners for select */
+    font-size: 16px;
+    height: auto;
+}
+
+.task-priority-select .ant-select-selection-item {
+    font-size: 16px;
+    /* Font size for selected item */
+}
+
+.task-priority-select .ant-select-arrow {
+    color: #777;
+    /* Muted color for the dropdown arrow */
+}
+
+/* Button Styling */
+.task-input-container button.ant-btn-primary {
+    background-color: #007bff;
+    /* Primary blue color */
+    border-color: #007bff;
+    color: white;
+    font-weight: 500;
+    border-radius: 4px;
+    padding: 8px 15px;
+    font-size: 16px;
+    width: 150px;
+    /* Set a fixed width for the button */
+}
+
+/* Button hover/focus states */
+.task-input-container button.ant-btn-primary:hover,
+.task-input-container button.ant-btn-primary:focus {
+    background-color: #0056b3;
+    /* Darker blue on hover/focus */
+    border-color: #0056b3;
+    color: white;
+}

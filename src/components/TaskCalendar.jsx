@@ -6,12 +6,19 @@ import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
 import { Modal, Form, Input, Select, Button, notification } from "antd";
 import "./TaskCalendar.css";
+import BacklogEvent from "./BacklogEvent";
+import TaskInput from "./TaskInput";
 
 const { Option } = Select;
 const localizer = momentLocalizer(moment);
 const DnDCalendar = withDragAndDrop(Calendar);
 
 const TaskCalendar = () => {
+  const [backLogEvents, setBackLogEvents] = useState(() => {
+    // Load backlog events from localStorage on component mount
+    const savedBacklogEvents = JSON.parse(localStorage.getItem("backlogEvents")) || [];
+    return savedBacklogEvents;
+  });
   const [events, setEvents] = useState([]);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [workingHours, setWorkingHours] = useState({ start: 9, end: 17 });
@@ -19,6 +26,12 @@ const TaskCalendar = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [newEventTime, setNewEventTime] = useState(null);
   const [form] = Form.useForm();
+  const startOfWeek = moment(currentDate).startOf("week").toDate();
+
+  // Save backlog events to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem("backlogEvents", JSON.stringify(backLogEvents));
+  }, [backLogEvents]);
 
   // Load events, view, and date from localStorage on component mount
   useEffect(() => {
@@ -67,20 +80,74 @@ const TaskCalendar = () => {
     setShowModal(true);
   };
 
+  const handleNavigate = (date) => {
+    const startOfWeek = moment(date).startOf("week").toDate(); // Get the start of the week
+    setCurrentDate(startOfWeek); // Update currentDate to the start of the week
+  };
+  const onDragStart = (e, event) => {
+    e.dataTransfer.setData("text/plain", JSON.stringify(event));
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+
+    const eventData = JSON.parse(e.dataTransfer.getData("text/plain"));
+    const { start, end } = getSlotInfo(e); // Get the drop position (start and end time)
+
+    const newEvent = {
+      ...eventData,
+      start,
+      end,
+      id: Date.now(), // Generate a unique ID for the new event
+    };
+
+    setEvents((prevEvents) => [...prevEvents, newEvent]);
+    // Remove the event from backlog after successful drop
+    setBackLogEvents((prevBacklog) => prevBacklog.filter((event) => event.id !== eventData.id));
+
+    notification.success({
+      message: "Event Added",
+      description: `The event "${eventData.title}" was successfully added to the calendar.`,
+    });
+  };
+
+  const getSlotInfo = (e) => {
+    const calendarBounds = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - calendarBounds.left; // X position relative to the calendar
+    const y = e.clientY - calendarBounds.top; // Y position relative to the calendar
+
+    // Calculate the time slot based on the mouse position
+    const slotWidth = calendarBounds.width / 7; // Divide by 7 days in a week
+    const slotHeight = calendarBounds.height / (workingHours.end - workingHours.start); // Divide by working hours
+
+    const dayIndex = Math.floor(x / slotWidth); // Day of the week (0 = Monday, 6 = Sunday)
+    const hourIndex = Math.floor(y / slotHeight); // Hour of the day (0 = workingHours.start)
+
+    const start = new Date(startOfWeek); // Use startOfWeek instead of currentDate
+    start.setDate(startOfWeek.getDate() + dayIndex); // Set the day
+    start.setHours(workingHours.start + hourIndex, 0, 0, 0); // Set the hour
+
+    const end = new Date(start);
+    end.setHours(start.getHours() + 1); // Default duration: 1 hour
+
+    return { start, end };
+  };
+
+
   const handleEventDelete = () => {
     if (selectedEvent) {
       // Delete the event from the state
       const updatedEvents = events.filter((evt) => evt.id !== selectedEvent.id);
-  
+
       // Save the updated events back to localStorage
       localStorage.setItem("calendarEvents", JSON.stringify(updatedEvents));
-  
+
       // Update the state with the new events list
       setEvents(updatedEvents);
-  
+
       // Close the modal
       setShowModal(false);
-  
+
       // Show a success notification
       notification.success({
         message: "Event Deleted",
@@ -147,6 +214,11 @@ const TaskCalendar = () => {
     }
     return { style: { backgroundColor, color: "#fff", borderRadius: "4px", border: "none" } };
   };
+  const handleAddTask = (newTask) => {
+    setBackLogEvents((prevEvents) => [...prevEvents, newTask]);
+  };
+
+
 
   const minTime = new Date();
   minTime.setHours(workingHours.start, 0, 0);
@@ -154,29 +226,52 @@ const TaskCalendar = () => {
   const maxTime = new Date();
   maxTime.setHours(workingHours.end, 0, 0);
 
+  const handleBacklogTask = () => {
+    if (selectedEvent) {
+      const { title, description, priority, id } = selectedEvent;
+      setBackLogEvents((prevEvents) => [...prevEvents, { title, description, priority, id }]);
+      localStorage.setItem("backlogEvents", JSON.stringify([...backLogEvents, { title, description, priority, id }]));
+      handleEventDelete();
+      setShowModal(false);
+      notification.success({
+        message: "Task Added to Backlog",
+        description: `The task "${title}" was successfully moved to backlog.`,
+      });
+    }
+  };
+
   return (
     <div className="calendar-container">
-      <div className="working-hours-container">
-        <label className="working-hours-label">Set Working Hours:</label>
-        <div className="working-hours-inputs">
-          <input
-            type="number"
-            value={workingHours.start}
-            min={0}
-            max={23}
-            onChange={(e) => setWorkingHours({ ...workingHours, start: Number(e.target.value) })}
-            className="working-hours-input"
-          />
-          <span className="working-hours-separator"> to </span>
-          <input
-            type="number"
-            value={workingHours.end}
-            min={1}
-            max={24}
-            onChange={(e) => setWorkingHours({ ...workingHours, end: Number(e.target.value) })}
-            className="working-hours-input"
-          />
+      <div className="top-section">
+        {/* TaskInput and Event side by side */}
+        <TaskInput onAddTask={handleAddTask} />
+        <BacklogEvent events={backLogEvents} setEvents={setBackLogEvents} onDragStart={onDragStart} />
+      </div>
+      <h3 className="external-events-title">Calendar</h3>
+      <div className="working-hour-box">
+        <div className="working-hours-container">
+          <label className="working-hours-label">Set Working Hours:</label>
+          <div className="working-hours-inputs">
+            <input
+              type="number"
+              value={workingHours.start}
+              min={0}
+              max={23}
+              onChange={(e) => setWorkingHours({ ...workingHours, start: Number(e.target.value) })}
+              className="working-hours-input"
+            />
+            <span className="working-hours-separator"> to </span>
+            <input
+              type="number"
+              value={workingHours.end}
+              min={1}
+              max={24}
+              onChange={(e) => setWorkingHours({ ...workingHours, end: Number(e.target.value) })}
+              className="working-hours-input"
+            />
+          </div>
         </div>
+
       </div>
 
       <Modal
@@ -184,12 +279,14 @@ const TaskCalendar = () => {
         visible={showModal}
         onCancel={() => setShowModal(false)}
         footer={[
-          <Button key="cancel" onClick={() => setShowModal(false)}>
-            Cancel
-          </Button>,
           selectedEvent && (
             <Button key="delete" danger onClick={handleEventDelete}>
               Delete Event
+            </Button>
+          ),
+          selectedEvent && (
+            <Button key="backlog" type="dashed" onClick={handleBacklogTask}>
+              Move to Backlog
             </Button>
           ),
           <Button key="submit" type="primary" onClick={handleFormSubmit}>
@@ -224,7 +321,11 @@ const TaskCalendar = () => {
         </Form>
       </Modal>
 
-      <div className="calendar-wrapper">
+      <div
+        className="calendar-wrapper"
+        onDrop={handleDrop}
+        onDragOver={(e) => e.preventDefault()} // Required to allow dropping
+      >
         <DnDCalendar
           localizer={localizer}
           events={events}
@@ -238,7 +339,7 @@ const TaskCalendar = () => {
           date={currentDate}
           defaultView={Views.WEEK}
           onView={Views.WEEK}
-          onNavigate={(date) => setCurrentDate(date)}
+          onNavigate={handleNavigate}
           onSelectSlot={handleSelectSlot}
           onSelectEvent={handleEventEdit}
           onEventDrop={handleEventMove}
@@ -246,7 +347,20 @@ const TaskCalendar = () => {
           eventPropGetter={eventStyleGetter}
           min={minTime}
           max={maxTime}
-          // step={15}
+          step={15} // Each slot represents 15 minutes
+          timeslots={4} // One timeslot per step
+          components={{
+            month: {
+              dateHeader: ({ label }) => <strong>{label}</strong>, // Customize month view headers
+            },
+            week: {
+              header: ({ date }) => (
+                <div>
+                  <strong>{moment(date).format("ddd, DD/MMM/YYYY")}</strong>
+                </div>
+              ),
+            },
+          }}
         />
       </div>
     </div>
