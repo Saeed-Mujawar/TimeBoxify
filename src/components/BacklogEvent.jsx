@@ -48,20 +48,22 @@ const BacklogEvent = ({ events: initialEvents, onDragStart, setEvents }) => {
     setEvents(newEvents);
     localStorage.setItem("backlogEvents", JSON.stringify(newEvents));
   };
-  
-  
+
   const handleDrop = (e, priority) => {
     e.preventDefault();
-    const eventId = e.dataTransfer.getData("eventId"); 
-  
-    // Convert eventId to a number for comparison
+    const eventId = e.dataTransfer.getData("eventId");
     const numericEventId = Number(eventId);
-  
-    const updatedEvents = initialEvents.map((event) => {
-      return event.id === numericEventId ? { ...event, priority } : event;
-    });
 
-    updateLocalStorage(updatedEvents);
+    const draggedEventIndex = initialEvents.findIndex(event => event.id === numericEventId);
+    if (draggedEventIndex !== -1) {
+      const draggedEvent = { ...initialEvents[draggedEventIndex], priority };
+
+      // Remove the dragged event and insert it at the drop position within the same or different priority
+      const remainingEvents = initialEvents.filter(event => event.id !== numericEventId);
+      const updatedEvents = [...remainingEvents, draggedEvent];
+
+      updateLocalStorage(updatedEvents);
+    }
   };
 
   const handleDragOver = (e) => {
@@ -70,7 +72,7 @@ const BacklogEvent = ({ events: initialEvents, onDragStart, setEvents }) => {
 
   const priorities = [
     { level: "high", color: "rgb(255, 125, 125)" },
-    { level: "medium", color: " rgb(250, 173, 20)" },
+    { level: "medium", color: "rgb(250, 173, 20)" },
     { level: "low", color: "rgb(127, 248, 67)" },
   ];
 
@@ -93,7 +95,7 @@ const BacklogEvent = ({ events: initialEvents, onDragStart, setEvents }) => {
           >
             <h4 className="priority-headings">{priority.level.toUpperCase()}</h4>
             {priority.events.length === 0 ? (
-              <Empty style description="No Task" />
+              <Empty description="No Task" />
             ) : (
               priority.events.map((event) => (
                 <div
@@ -148,7 +150,6 @@ const BacklogEvent = ({ events: initialEvents, onDragStart, setEvents }) => {
     </div>
   </Modal>
 )}
-
     </div>
   );
 };

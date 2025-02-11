@@ -132,3 +132,7 @@
   justify-content: space-between;
   
 }
+
+.rbc-addons-dnd-resize-ns-anchor{
+  box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1);
+}

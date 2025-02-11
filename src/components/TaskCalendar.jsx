@@ -125,11 +125,11 @@ const TaskCalendar = () => {
     const slotWidth = calendarBounds.width / 7; // Divide by 7 days in a week
     const slotHeight = calendarBounds.height / (workingHours.end - workingHours.start); // Divide by working hours
 
-    const dayIndex = Math.floor(x / slotWidth); // Day of the week (0 = Monday, 6 = Sunday)
+    const dayIndex = Math.floor(x / slotWidth); // Day of the week (0 = Sunday, 6 = Saturday)
     const hourIndex = Math.floor(y / slotHeight); // Hour of the day (0 = workingHours.start)
 
-    const start = new Date(startOfWeek); // Use startOfWeek instead of currentDate
-    start.setDate(startOfWeek.getDate() + dayIndex); // Set the day
+    const start = new Date(startOfWeek); 
+    start.setDate(start.getDate() + dayIndex); // Set the day based on calculated index
     start.setHours(workingHours.start + hourIndex, 0, 0, 0); // Set the hour
 
     const end = new Date(start);
@@ -137,6 +137,7 @@ const TaskCalendar = () => {
 
     return { start, end };
   };
+
 
 
   const handleEventDelete = () => {
@@ -364,6 +365,11 @@ const TaskCalendar = () => {
                   <strong>{moment(date).format("ddd, DD/MMM/YYYY")}</strong>
                 </div>
               ),
+            },
+          }}
+          formats={{
+            week: {
+              startOfWeek: "Monday", // Ensure Monday is the start of the week
             },
           }}
         />
