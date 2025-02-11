@@ -229,7 +229,16 @@ const TaskCalendar = () => {
     return { style: { backgroundColor, color: "#fff", borderRadius: "4px", border: "none" } };
   };
   const handleAddTask = (newTask) => {
-    setBackLogEvents((prevEvents) => [...prevEvents, newTask]);
+    setBackLogEvents((prevEvents) => {
+      const updatedEvents = [...prevEvents, newTask];
+      localStorage.setItem("backlogEvents", JSON.stringify(updatedEvents)); // Sync immediately
+      return updatedEvents;
+    });
+  
+    notification.success({
+      message: "Task Added",
+      description: `The task "${newTask.title}" was successfully added to the backlog.`,
+    });
   };
 
 
