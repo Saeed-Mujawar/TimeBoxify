@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/TimeBoxify/static/css/main.8feb5cb8.css",
+    "main.js": "/TimeBoxify/static/js/main.b8bf3288.js",
+    "index.html": "/TimeBoxify/index.html",
+    "main.8feb5cb8.css.map": "/TimeBoxify/static/css/main.8feb5cb8.css.map",
+    "main.b8bf3288.js.map": "/TimeBoxify/static/js/main.b8bf3288.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.8feb5cb8.css",
+    "static/js/main.b8bf3288.js"
+  ]
+}
