@@ -9,6 +9,9 @@
   font-family: Arial, sans-serif;
   display: flex;
   flex-direction: column;
+  background-color: #fff;
+  border-radius: 8px;
+
 }
 
 .calendar-wrapper {

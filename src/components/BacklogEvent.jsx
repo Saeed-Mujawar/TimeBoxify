@@ -117,39 +117,39 @@ const BacklogEvent = ({ events: initialEvents, onDragStart, setEvents }) => {
       </div>
 
       {selectedEvent && (
-  <Modal
-    title="Edit Event"
-    visible={isModalOpen}
-    onCancel={handleModalClose}
-    footer={[
-      <Button key="delete" danger onClick={() => handleDelete(selectedEvent.id)}>
-        Delete
-      </Button>,
-      <Button key="save" type="primary" onClick={handleSave}>
-        Save
-      </Button>
-    ]}
-  >
-    <div>
-      <h4>Title</h4>
-      <Input
-        placeholder="Title"
-        value={updatedEvent.title}
-        onChange={(e) => handleInputChange("title", e.target.value)}
-      />
-    </div>
+        <Modal
+          title="Edit Event"
+          visible={isModalOpen}
+          onCancel={handleModalClose}
+          footer={[
+            <Button key="delete" danger onClick={() => handleDelete(selectedEvent.id)}>
+              Delete
+            </Button>,
+            <Button key="save" type="primary" onClick={handleSave}>
+              Save
+            </Button>
+          ]}
+        >
+          <div>
+            <h4>Title</h4>
+            <Input
+              placeholder="Title"
+              value={updatedEvent.title}
+              onChange={(e) => handleInputChange("title", e.target.value)}
+            />
+          </div>
 
-    <div style={{ marginTop: "1rem" }}>
-      <h4>Description</h4>
-      <Input.TextArea
-        placeholder="Description"
-        value={updatedEvent.description}
-        onChange={(e) => handleInputChange("description", e.target.value)}
-        rows={4}
-      />
-    </div>
-  </Modal>
-)}
+          <div style={{ marginTop: "1rem" }}>
+            <h4>Description</h4>
+            <Input.TextArea
+              placeholder="Description"
+              value={updatedEvent.description}
+              onChange={(e) => handleInputChange("description", e.target.value)}
+              rows={4}
+            />
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };

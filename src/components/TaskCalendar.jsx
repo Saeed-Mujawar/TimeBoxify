@@ -21,8 +21,11 @@ const TaskCalendar = () => {
   });
   const [events, setEvents] = useState([]);
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [workingHours, setWorkingHours] = useState({ start: 9, end: 17 });
-  const [showModal, setShowModal] = useState(false);
+  const [workingHours, setWorkingHours] = useState(() => {
+    // Load working hours from localStorage or use default values
+    const savedWorkingHours = JSON.parse(localStorage.getItem("workingHours"));
+    return savedWorkingHours || { start: 9, end: 17 };
+  });  const [showModal, setShowModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [newEventTime, setNewEventTime] = useState(null);
   const [form] = Form.useForm();
@@ -32,6 +35,11 @@ const TaskCalendar = () => {
   useEffect(() => {
     localStorage.setItem("backlogEvents", JSON.stringify(backLogEvents));
   }, [backLogEvents]);
+
+  useEffect(() => {
+    // Save working hours to localStorage whenever they change
+    localStorage.setItem("workingHours", JSON.stringify(workingHours));
+  }, [workingHours]);
 
   // Load events, view, and date from localStorage on component mount
   useEffect(() => {
