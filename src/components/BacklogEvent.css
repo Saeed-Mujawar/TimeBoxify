@@ -1,24 +1,24 @@
 /* Wrapper container to hold both the title and events */
 .external-events-container {
   max-width: 100%;
-  width: 50%;
+  width: 100%;
   background: #ffffff;
-  border-radius: 4px;
+  border-radius: 10px;
 }
 
 /* Style for the title */
 .external-events-title {
   grid-column: span 3; /* Ensure it spans all columns */
-  background-color: #f1f1f1;
+  background-color: #e3fcff;
   padding: 10px;
-  border-radius: 5px;
+  border-radius: 10px;
   font-size: 18px;
   font-weight: bold;
   text-align: center;
   margin: 0px;
   color: #333;
   margin-bottom: 15px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
   
 }
 
@@ -27,7 +27,7 @@
    padding: 0 10px ;
    /* margin: 10px; */
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* Create 3 equal columns */
+  grid-template-columns: repeat(4, 1fr); /* Create 3 equal columns */
   gap: 10px; /* Add spacing between columns */
 
 }
@@ -37,10 +37,12 @@
   padding: 8px;
   margin: 5px 0;
   background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 10px;
   cursor: grab;
+  /* height: 20px; */
   text-align: center; /* Center text inside each event */
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+ 
 }
 
 .external-events .ant-empty {
@@ -55,10 +57,14 @@
 .priority-column {
   flex: 1;
   padding: 10px;
-  border-radius: 4px;
+  border-radius: 25px;
   min-height: 245px;
   overflow-y: auto;
   max-height: 200px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+  margin-top: 20px;
 }
 
 .priority-headings {

@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Empty, Input, Button } from "antd";
 import './BacklogEvent.css';
+import { WarningOutlined } from "@ant-design/icons";
 
-const BacklogEvent = ({ events: initialEvents, onDragStart, setEvents }) => {
+const BacklogEvent = ({ events, onDragStart, setEvents, onDrop }) => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [updatedEvent, setUpdatedEvent] = useState({});
 
   useEffect(() => {
     // Load from local storage if events prop is empty
-    if (!initialEvents.length) {
+    if (!events.length) {
       const storedEvents = JSON.parse(localStorage.getItem("backlogEvents")) || [];
       setEvents(storedEvents);
     }
-  }, [initialEvents, setEvents]);
+  }, [events, setEvents]);
 
   const handleOpenModal = (event) => {
     setSelectedEvent(event);
@@ -31,7 +32,7 @@ const BacklogEvent = ({ events: initialEvents, onDragStart, setEvents }) => {
   };
 
   const handleSave = () => {
-    const updatedEvents = initialEvents.map((event) =>
+    const updatedEvents = events.map((event) =>
       event.id === updatedEvent.id ? updatedEvent : event
     );
     updateLocalStorage(updatedEvents);
@@ -39,7 +40,7 @@ const BacklogEvent = ({ events: initialEvents, onDragStart, setEvents }) => {
   };
 
   const handleDelete = (eventId) => {
-    const filteredEvents = initialEvents.filter((event) => event.id !== eventId);
+    const filteredEvents = events.filter((event) => event.id !== eventId);
     updateLocalStorage(filteredEvents);
     handleModalClose();
   };
@@ -51,39 +52,38 @@ const BacklogEvent = ({ events: initialEvents, onDragStart, setEvents }) => {
 
   const handleDrop = (e, priority) => {
     e.preventDefault();
-    const eventId = e.dataTransfer.getData("eventId");
-    const numericEventId = Number(eventId);
-
-    const draggedEventIndex = initialEvents.findIndex(event => event.id === numericEventId);
-    if (draggedEventIndex !== -1) {
-      const draggedEvent = { ...initialEvents[draggedEventIndex], priority };
-
-      // Remove the dragged event and insert it at the drop position within the same or different priority
-      const remainingEvents = initialEvents.filter(event => event.id !== numericEventId);
-      const updatedEvents = [...remainingEvents, draggedEvent];
-
-      updateLocalStorage(updatedEvents);
-    }
+    const droppedData = JSON.parse(e.dataTransfer.getData("application/json"));
+  
+    // Remove the task from both Backlog and Unscheduled lists
+    onDrop(droppedData.id);
+  
+    // Update event with new priority
+    const updatedEvent = { ...droppedData, priority };
+  
+    setEvents((prev) => {
+      const filteredEvents = prev.filter(event => event.id !== droppedData.id);
+      const newEvents = [...filteredEvents, updatedEvent];
+      localStorage.setItem("backlogEvents", JSON.stringify(newEvents));
+      return newEvents;
+    });
   };
 
-  const handleDragOver = (e) => {
-    e.preventDefault();
-  };
 
   const priorities = [
-    { level: "high", color: "rgb(255, 125, 125)" },
-    { level: "medium", color: "rgb(250, 173, 20)" },
-    { level: "low", color: "rgb(127, 248, 67)" },
+    { level: "must-do", color: "rgb(255, 125, 125)" },
+    { level: "should-do", color: "rgb(250, 173, 20)" },
+    { level: "nice-to-do", color: "rgb(127, 248, 67)" },
+    { level: "diligent", color: "#5b5dff" },
   ];
 
   const sortedEvents = priorities.map((priority) => ({
     ...priority,
-    events: initialEvents.filter((event) => event.priority === priority.level),
+    events: events.filter((event) => event.priority === priority.level),
   }));
 
   return (
     <div className="external-events-container">
-      <h3 className="external-events-title">Backlog Task Prioritization</h3>
+      <h3 className="external-events-title">Task Prioritization</h3>
       <div className="external-events">
         {sortedEvents.map((priority) => (
           <div
@@ -91,20 +91,23 @@ const BacklogEvent = ({ events: initialEvents, onDragStart, setEvents }) => {
             className="priority-column"
             style={{ backgroundColor: priority.color }}
             onDrop={(e) => handleDrop(e, priority.level)}
-            onDragOver={handleDragOver}
+            onDragOver={(e) => e.preventDefault()}
           >
             <h4 className="priority-headings">{priority.level.toUpperCase()}</h4>
             {priority.events.length === 0 ? (
-              <Empty description="No Task" />
+                 <Empty 
+                 description="" 
+                 image={<WarningOutlined  Outlined style={{ fontSize: 50, color: 'white',marginTop: '45px'  }} />}            
+               />
             ) : (
               priority.events.map((event) => (
                 <div
                   key={event.id}
                   draggable
                   onDragStart={(e) => {
-                    e.dataTransfer.setData("eventId", event.id);
+                    e.dataTransfer.setData("application/json", JSON.stringify(event));
                     onDragStart(e, event);
-                  }}
+                  }}                  
                   className="external-event"
                   onClick={() => handleOpenModal(event)}
                 >

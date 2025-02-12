@@ -1,0 +1,57 @@
+.external-tasks-container {
+    max-width: 100%;
+    width: 100%;
+    background: #ffffff;
+    border-radius: 5px;
+  }
+  
+  .external-tasks-title {
+    grid-column: span 3;
+    background-color: #e3fcff;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    margin: 0px;
+    color: #333;
+    margin-bottom: 15px;
+    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);    
+  }
+  
+  .external-tasks {
+     padding:  10px ;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    height: 150px;
+    overflow-y: auto;
+    max-height: 200px;
+    margin-bottom: 20px;
+  
+  }
+  
+  .external-task {
+    padding: 8px;
+    margin: 5px 0;
+    background: #fff;
+    border-radius: 10px;
+    cursor: grab;
+    height: 20px;
+    text-align: center;
+    width: 70%;
+    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+
+  }
+  
+  .external-tasks .ant-empty {
+    justify-content: center; 
+    align-items: center; 
+    text-align: center;
+    grid-column: span 3;
+  }
+  
+  .external-task:active {
+    cursor: grabbing;
+  }
+

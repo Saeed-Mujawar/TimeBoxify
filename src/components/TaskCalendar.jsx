@@ -13,12 +13,8 @@ const { Option } = Select;
 const localizer = momentLocalizer(moment);
 const DnDCalendar = withDragAndDrop(Calendar);
 
-const TaskCalendar = () => {
-  const [backLogEvents, setBackLogEvents] = useState(() => {
-    // Load backlog events from localStorage on component mount
-    const savedBacklogEvents = JSON.parse(localStorage.getItem("backlogEvents")) || [];
-    return savedBacklogEvents;
-  });
+const TaskCalendar = ({backLogEvents, setBackLogEvents}) => {
+
   const [events, setEvents] = useState([]);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [workingHours, setWorkingHours] = useState(() => {
@@ -83,7 +79,7 @@ const TaskCalendar = () => {
     form.setFieldsValue({
       title: event.title,
       description: event.description || "",
-      priority: event.priority || "low",
+      priority: event.priority || "nice-to-do",
     });
     setShowModal(true);
   };
@@ -92,9 +88,7 @@ const TaskCalendar = () => {
     const startOfWeek = moment(date).startOf("week").toDate(); // Get the start of the week
     setCurrentDate(startOfWeek); // Update currentDate to the start of the week
   };
-  const onDragStart = (e, event) => {
-    e.dataTransfer.setData("text/plain", JSON.stringify(event));
-  };
+
 
   const handleDrop = (e) => {
     e.preventDefault();
@@ -118,10 +112,6 @@ const TaskCalendar = () => {
       return updatedBacklog;
     });
   
-    notification.success({
-      message: "Event Added",
-      description: `The event "${eventData.title}" was successfully added to the calendar.`,
-    });
   };
 
   const getSlotInfo = (e) => {
@@ -215,33 +205,22 @@ const TaskCalendar = () => {
   const eventStyleGetter = (event) => {
     let backgroundColor;
     switch (event.priority) {
-      case "high":
+      case "must-do":
         backgroundColor = "#ff4d4f";
         break;
-      case "medium":
+      case "should-do":
         backgroundColor = "#faad14";
         break;
-      case "low":
-      default:
+      case "nice-to-do":
         backgroundColor = "#52c41a";
+        break;
+      case "Diligent":
+      default:
+        backgroundColor = "#5b5dff";
         break;
     }
     return { style: { backgroundColor, color: "#fff", borderRadius: "4px", border: "none" } };
   };
-  const handleAddTask = (newTask) => {
-    setBackLogEvents((prevEvents) => {
-      const updatedEvents = [...prevEvents, newTask];
-      localStorage.setItem("backlogEvents", JSON.stringify(updatedEvents)); // Sync immediately
-      return updatedEvents;
-    });
-  
-    notification.success({
-      message: "Task Added",
-      description: `The task "${newTask.title}" was successfully added to the backlog.`,
-    });
-  };
-
-
 
   const minTime = new Date();
   minTime.setHours(workingHours.start, 0, 0);
@@ -262,14 +241,32 @@ const TaskCalendar = () => {
       });
     }
   };
+  const onDrag = (e) => {
+    // e.preventDefault();  // Allow normal drag behavior to proceed without blocking
+  };
+
+  const onDragOver = (e) => {
+    e.preventDefault(); // Allow drop
+  
+    const scrollContainer = e.target.closest('.calendar-wrapper');
+    if (!scrollContainer) return;
+  
+    const { clientHeight, scrollTop, scrollHeight } = scrollContainer;
+  
+    // Check if the mouse is near the top or bottom of the container to trigger scroll
+    if (e.clientY > scrollHeight - 50) {
+      scrollContainer.scrollTop = scrollTop + 10;
+    } else if (e.clientY < 50) {
+      scrollContainer.scrollTop = scrollTop - 10;
+    }
+  
+    // Smooth scrolling
+    scrollContainer.style.scrollBehavior = 'smooth';
+  };
 
   return (
     <div className="calendar-container">
-      <div className="top-section">
-        {/* TaskInput and Event side by side */}
-        <TaskInput onAddTask={handleAddTask} />
-        <BacklogEvent events={backLogEvents} setEvents={setBackLogEvents} onDragStart={onDragStart} />
-      </div>
+        {/* <BacklogEvent events={backLogEvents} setEvents={setBackLogEvents} onDragStart={onDragStart}/> */}
       <h3 className="external-events-title">Calendar</h3>
       <div className="working-hour-box">
         <div className="working-hours-container">
@@ -336,9 +333,10 @@ const TaskCalendar = () => {
             rules={[{ required: true, message: "Please select a priority!" }]}
           >
             <Select>
-              <Option value="low">Low</Option>
-              <Option value="medium">Medium</Option>
-              <Option value="high">High</Option>
+              <Option value="nice-to-do">Nice-To-Do</Option>
+              <Option value="should-do">Should-Do</Option>
+              <Option value="must-do">Must-Do</Option>
+              <Option value="diligent">Deiligent</Option>
             </Select>
           </Form.Item>
         </Form>
@@ -347,7 +345,8 @@ const TaskCalendar = () => {
       <div
         className="calendar-wrapper"
         onDrop={handleDrop}
-        onDragOver={(e) => e.preventDefault()} // Required to allow dropping
+        onDragOver={onDragOver} // Required to allow dropping
+        onDrag={onDrag}
       >
         <DnDCalendar
           localizer={localizer}
