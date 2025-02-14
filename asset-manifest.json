@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/TimeBoxify/static/css/main.03950b6a.css",
-    "main.js": "/TimeBoxify/static/js/main.51a4d71d.js",
+    "main.css": "/TimeBoxify/static/css/main.2ad6d340.css",
+    "main.js": "/TimeBoxify/static/js/main.34781255.js",
     "index.html": "/TimeBoxify/index.html",
-    "main.03950b6a.css.map": "/TimeBoxify/static/css/main.03950b6a.css.map",
-    "main.51a4d71d.js.map": "/TimeBoxify/static/js/main.51a4d71d.js.map"
+    "main.2ad6d340.css.map": "/TimeBoxify/static/css/main.2ad6d340.css.map",
+    "main.34781255.js.map": "/TimeBoxify/static/js/main.34781255.js.map"
   },
   "entrypoints": [
-    "static/css/main.03950b6a.css",
-    "static/js/main.51a4d71d.js"
+    "static/css/main.2ad6d340.css",
+    "static/js/main.34781255.js"
   ]
 }
