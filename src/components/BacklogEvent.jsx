@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Empty, Input, Button } from "antd";
-import './BacklogEvent.css';
+import { Empty } from "antd";
 import { WarningOutlined } from "@ant-design/icons";
+import "./BacklogEvent.css";
+import EditTaskModal from "./helperComponents/EditTaskModal";
 
 const BacklogEvent = ({ events, onDragStart, setEvents, onDrop }) => {
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [updatedEvent, setUpdatedEvent] = useState({});
 
   useEffect(() => {
-    // Load from local storage if events prop is empty
     if (!events.length) {
       const storedEvents = JSON.parse(localStorage.getItem("backlogEvents")) || [];
       setEvents(storedEvents);
@@ -18,25 +16,17 @@ const BacklogEvent = ({ events, onDragStart, setEvents, onDrop }) => {
 
   const handleOpenModal = (event) => {
     setSelectedEvent(event);
-    setUpdatedEvent(event);
-    setIsModalOpen(true);
   };
 
   const handleModalClose = () => {
-    setIsModalOpen(false);
     setSelectedEvent(null);
   };
 
-  const handleInputChange = (field, value) => {
-    setUpdatedEvent({ ...updatedEvent, [field]: value });
-  };
-
-  const handleSave = () => {
+  const handleUpdate = (updatedEvent) => {
     const updatedEvents = events.map((event) =>
       event.id === updatedEvent.id ? updatedEvent : event
     );
     updateLocalStorage(updatedEvents);
-    handleModalClose();
   };
 
   const handleDelete = (eventId) => {
@@ -53,13 +43,11 @@ const BacklogEvent = ({ events, onDragStart, setEvents, onDrop }) => {
   const handleDrop = (e, priority) => {
     e.preventDefault();
     const droppedData = JSON.parse(e.dataTransfer.getData("application/json"));
-  
-    // Remove the task from both Backlog and Unscheduled lists
+
     onDrop(droppedData.id);
-  
-    // Update event with new priority
+
     const updatedEvent = { ...droppedData, priority };
-  
+
     setEvents((prev) => {
       const filteredEvents = prev.filter(event => event.id !== droppedData.id);
       const newEvents = [...filteredEvents, updatedEvent];
@@ -67,7 +55,6 @@ const BacklogEvent = ({ events, onDragStart, setEvents, onDrop }) => {
       return newEvents;
     });
   };
-
 
   const priorities = [
     { level: "must-do", color: "rgb(255, 125, 125)" },
@@ -95,12 +82,12 @@ const BacklogEvent = ({ events, onDragStart, setEvents, onDrop }) => {
           >
             <h4 className="priority-headings">{priority.level.toUpperCase()}</h4>
             {priority.events.length === 0 ? (
-                 <Empty 
-                 description="" 
-                 image={<WarningOutlined  Outlined style={{ fontSize: 50, color: 'white',marginTop: '45px'  }} />}            
-               />
+              <Empty 
+                description="" 
+                image={<WarningOutlined style={{ fontSize: 50, color: 'white', marginTop: '45px' }} />}            
+              />
             ) : (
-              priority.events.map((event) => (
+              priority.events.map((event, index) => (
                 <div
                   key={event.id}
                   draggable
@@ -111,7 +98,8 @@ const BacklogEvent = ({ events, onDragStart, setEvents, onDrop }) => {
                   className="external-event"
                   onClick={() => handleOpenModal(event)}
                 >
-                  {event.title}
+                  <span >{event.title}</span>
+                  <span className="priority-number">Priority {index + 1}</span>
                 </div>
               ))
             )}
@@ -120,38 +108,17 @@ const BacklogEvent = ({ events, onDragStart, setEvents, onDrop }) => {
       </div>
 
       {selectedEvent && (
-        <Modal
-          title="Edit Event"
-          visible={isModalOpen}
-          onCancel={handleModalClose}
-          footer={[
-            <Button key="delete" danger onClick={() => handleDelete(selectedEvent.id)}>
-              Delete
-            </Button>,
-            <Button key="save" type="primary" onClick={handleSave}>
-              Save
-            </Button>
-          ]}
-        >
-          <div>
-            <h4>Title</h4>
-            <Input
-              placeholder="Title"
-              value={updatedEvent.title}
-              onChange={(e) => handleInputChange("title", e.target.value)}
-            />
-          </div>
-
-          <div style={{ marginTop: "1rem" }}>
-            <h4>Description</h4>
-            <Input.TextArea
-              placeholder="Description"
-              value={updatedEvent.description}
-              onChange={(e) => handleInputChange("description", e.target.value)}
-              rows={4}
-            />
-          </div>
-        </Modal>
+        <EditTaskModal
+          task={selectedEvent}
+          priorityNumber={
+            sortedEvents
+              .find(p => p.level === selectedEvent.priority)
+              ?.events.findIndex(event => event.id === selectedEvent.id) + 1
+          }
+          onClose={handleModalClose}
+          onDelete={handleDelete}
+          onUpdate={handleUpdate}
+        />
       )}
     </div>
   );

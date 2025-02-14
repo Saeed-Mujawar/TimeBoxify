@@ -23,12 +23,14 @@
      padding:  10px ;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    height: 150px;
+    /* gap: 5px; */
+    height: 450px;
     overflow-y: auto;
-    max-height: 200px;
+    max-height: 500px;
     margin-bottom: 20px;
-  
+    width: 95vw;
+    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
   }
   
   .external-task {

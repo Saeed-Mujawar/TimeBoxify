@@ -1,92 +1,64 @@
 /* TaskInput.css */
 
 .task-input-container {
-    max-width: 600px; /* Limit the width */
+    max-width: 600px;
     width: 100%; /* Ensure it takes up the full available width */
     display: flex;
-    flex-direction: column;
     padding: 25px;
-    background-color: #ffffff;
+    /* background-color: #ffffff; */
     gap: 15px;
-    border-radius: 10px;
-    align-items:end;
+    border-radius: 20px;
+    align-items: center;
     margin-bottom: 20px;
+    justify-content: center;
+}
+
+.task-input {
+    border: none;
+    width: 80%; 
+    padding: 10px 12px;
+
+    border-radius: 10px;
+    /* Rounded corners */
+    font-size: 16px;
+    /* Readable font size */
     box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
 }
 
-.task-input,
-.task-description-input {
-    padding: 10px 12px;
-    /* Padding inside the input fields */
-    border: 1px solid #ccc;
-    /* Border for the input */
-    border-radius: 4px;
-    /* Rounded corners */
-    font-size: 14px;
-    /* Readable font size */
-}
-
 .task-input:focus,
-.task-description-input:focus {
+.button:focus {
     outline: none;
     /* Remove default focus outline */
-    border-color: #007bff;
+    border-color: #000000;
     /* Blue border on focus */
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
-    /* Subtle blue shadow */
-}
-
-/* Description Input */
-.task-description-input {
-    resize: vertical;
-    /* Allow resizing the description area vertically */
-    height: 100px;
-    /* Set a fixed height, but allow resizing */
 }
 
 /* Align select and button in one row */
 .task-select-button-container {
     display: flex;
-    justify-content:space-between;
+    justify-content: space-between;
     /* Space out select and button */
     gap: 10px;
     /* Space between select and button */
+    height: 100%;
+    /* padding: 10px; */
+    max-height: 100%;
 }
 
-.task-priority-select {
-    width: 100%;
-    /* Make the select take up available space */
-    max-width: 280px;
-    /* Maximum width */
-    height: auto;
-}
-
-.task-priority-select .ant-select-selector {
-    padding: 8px 12px;
-    /* Adjust padding inside the select box */
-    border-radius: 4px;
-    /* Rounded corners for select */
-    font-size: 16px;
-    height: auto;
-}
-
-.task-priority-select .ant-select-selection-item {
-    font-size: 16px;
-    /* Font size for selected item */
-}
-
-.task-priority-select .ant-select-arrow {
-    color: #777;
-    /* Muted color for the dropdown arrow */
-}
-
-
-
-/* Button hover/focus states */
-.task-input-container button.ant-btn-primary:hover,
-.task-input-container button.ant-btn-primary:focus {
-    background-color: #0056b3;
-    /* Darker blue on hover/focus */
-    border-color: #0056b3;
+.task-select-button-container button {
+    padding: 10px;
+    font-size: 14px;
+    background-color: rgb(0, 204, 255); 
     color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+/* Button hover effect */
+.task-select-button-container button:hover {
+    background-color: rgb(71, 218, 255); /* Darker green when hovered */
+    box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
 }

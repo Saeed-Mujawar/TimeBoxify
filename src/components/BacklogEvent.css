@@ -34,15 +34,28 @@
 
 /* Style for each event in the external events section */
 .external-event {
-  padding: 8px;
+  padding: 10px;
   margin: 5px 0;
   background: #fff;
   border-radius: 10px;
   cursor: grab;
   /* height: 20px; */
-  text-align: center; /* Center text inside each event */
+  justify-content: space-between;
+  align-items: center;
+  display: flex;
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
- 
+  font-size: 1.1em;
+  font-weight: bold;
+  border-top: 6px solid #a734ba ;
+}
+.priority-number{
+  font-size: 0.75em;
+  font-weight:bold;
+  background-color: rgb(123, 126, 250);
+  padding: 3px 10px 3px 10px;
+  border-radius: 30px;
+  color: white;
+  margin-right: 5px;
 }
 
 .external-events .ant-empty {

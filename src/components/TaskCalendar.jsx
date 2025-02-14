@@ -93,9 +93,33 @@ const TaskCalendar = ({backLogEvents, setBackLogEvents}) => {
   const handleDrop = (e) => {
     e.preventDefault();
 
-    const eventData = JSON.parse(e.dataTransfer.getData("text/plain"));
-    const { start, end } = getSlotInfo(e); // Get the drop position (start and end time)
+    const draggedData = e.dataTransfer.getData("application/json");
 
+    // Check if draggedData is empty
+    if (!draggedData) {
+        console.warn("No valid data received in drag event.");
+        return;
+    }
+
+    let eventData;
+    try {
+        eventData = JSON.parse(draggedData);
+    } catch (error) {
+        console.error("Error parsing dropped data:", error);
+        return;
+    }
+
+    const { start, end } = getSlotInfo(e); // Get the drop position (start and end time)
+    
+    // Retrieve backlog events from local storage
+    const backlogEvents = JSON.parse(localStorage.getItem("backlogEvents")) || [];
+
+    // Check if the dropped event exists in backlogEvents
+    const isFromBacklog = backlogEvents.some(event => event.id === eventData.id);
+    if (!isFromBacklog) {
+        console.warn("Dropped item is not from backlogEvents");
+        return; // Exit if it's not a backlog event
+    }
     const newEvent = {
       ...eventData,
       start,
@@ -295,13 +319,13 @@ const TaskCalendar = ({backLogEvents, setBackLogEvents}) => {
       </div>
 
       <Modal
-        title={selectedEvent ? "Edit Event" : "Create Event"}
+        title={selectedEvent ? "Edit Task" : "Create Task"}
         visible={showModal}
         onCancel={() => setShowModal(false)}
         footer={[
           selectedEvent && (
             <Button key="delete" danger onClick={handleEventDelete}>
-              Delete Event
+              Delete Task
             </Button>
           ),
           selectedEvent && (
@@ -310,7 +334,7 @@ const TaskCalendar = ({backLogEvents, setBackLogEvents}) => {
             </Button>
           ),
           <Button key="submit" type="primary" onClick={handleFormSubmit}>
-            {selectedEvent ? "Save Changes" : "Create Event"}
+            {selectedEvent ? "Save Changes" : "Create Task"}
           </Button>,
         ]}
       >
@@ -318,7 +342,7 @@ const TaskCalendar = ({backLogEvents, setBackLogEvents}) => {
           <Form.Item
             label="Title"
             name="title"
-            rules={[{ required: true, message: "Please input the event title!" }]}
+            rules={[{ required: true, message: "Please input the Task title!" }]}
           >
             <Input />
           </Form.Item>
