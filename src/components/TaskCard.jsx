@@ -6,7 +6,7 @@ import {
 } from "@ant-design/icons";
 import "./TaskCard.css";
 
-const TaskCard = ({ task, onClose, onDelete, onUpdate, priorityNumber }) => {
+const TaskCard = ({ task, onClose, onDelete, onUpdate, priorityNumber, visible }) => {
     const [title, setTitle] = useState(task.title);
     const [description, setDescription] = useState(task.description);
     const [selectedActions, setSelectedActions] = useState(task.key || []);
@@ -30,6 +30,16 @@ const TaskCard = ({ task, onClose, onDelete, onUpdate, priorityNumber }) => {
         setTaskDuration((prev) => Math.max(15, prev + amount)); // Ensures minimum 15 min
     };
 
+    const handleCreateTask = () => {
+        // Your logic for creating a new task
+        console.log("Create Task clicked!");
+    };
+
+    const handleMoveToBacklog = () => {
+        // Your logic for moving to backlog
+        console.log("Move to Backlog clicked!");
+    };
+
     return (
         <div className="task-card">
             <div className="task-card-header">
@@ -38,19 +48,19 @@ const TaskCard = ({ task, onClose, onDelete, onUpdate, priorityNumber }) => {
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="Task Title"
                     className="task-card-title"
+                    onFocus={(e) => e.target.select()}  // Select all text when the input is focused
                 />
                 {priorityNumber &&(
                     <span className="priority-number">Priority {priorityNumber}</span>
-
                 )}
                 <PlusCircleOutlined className="plus-icon"/>
-                
             </div>
             <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Enter the details of your task here"
                 className="task-card-description"
+                onFocus={(e) => e.target.select()}  // Select all text when the input is focused
             />
             <div className="actions-grid">
                 {[{
@@ -85,14 +95,25 @@ const TaskCard = ({ task, onClose, onDelete, onUpdate, priorityNumber }) => {
 
             <div className="task-footer">
                 <DeleteOutlined onClick={handleDelete} className="delete-icon" />
+
                 <div className="task-timer">
                     <MinusCircleOutlined className="time-icon" onClick={() => changeTime(-15)} />
                     <span className="time-text">{taskDuration} min</span>
                     <PlusCircleOutlined className="time-icon" onClick={() => changeTime(15)} />
                 </div>
-
             </div>
 
+            {/* Conditional Rendering of Buttons */}
+            {visible && (
+                <div className="task-actions">
+                    <button onClick={handleMoveToBacklog} className="move-backlog-btn">
+                        Move to Backlog
+                    </button>
+                    <button onClick={handleCreateTask} className="create-task-btn">
+                        Create Task
+                    </button>
+                </div>
+            )}
         </div>
     );
 };

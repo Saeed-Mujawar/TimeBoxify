@@ -9,7 +9,7 @@
 /* Style for the title */
 .external-events-title {
   grid-column: span 3; /* Ensure it spans all columns */
-  background-color: #e3fcff;
+  background-color: #e2e2e2;
   padding: 10px;
   border-radius: 10px;
   font-size: 18px;
@@ -24,8 +24,7 @@
 
 /* Style for the container holding the events */
 .external-events {
-   padding: 0 10px ;
-   /* margin: 10px; */
+  padding: 0 10px ;
   display: grid;
   grid-template-columns: repeat(4, 1fr); /* Create 3 equal columns */
   gap: 10px; /* Add spacing between columns */
@@ -43,48 +42,53 @@
   justify-content: space-between;
   align-items: center;
   display: flex;
-  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 20px rgba(0, 0, 0, 0.1);
   font-size: 1.1em;
   font-weight: bold;
-  border-top: 6px solid #a734ba ;
+  /* border-top: 6px solid #a734ba ; */
 }
-.priority-number{
+
+.external-event .priority-number{
   font-size: 0.75em;
   font-weight:bold;
-  background-color: rgb(123, 126, 250);
+  background-color: rgb(255, 255, 255);
   padding: 3px 10px 3px 10px;
   border-radius: 30px;
-  color: white;
+  color: rgb(0, 0, 0);
   margin-right: 5px;
+  box-shadow: 0 1px 20px rgba(0, 0, 0, 0.1);
 }
 
 .external-events .ant-empty {
   justify-content: center; /* Center horizontally */
   align-items: center; /* Center vertically */
-  /* height: 100%; Ensure it takes up the full height of the container */
   text-align: center;
   grid-column: span 3;
 }
 
 /* Style for each priority column */
 .priority-column {
+  background-color: #ffffff;
   flex: 1;
   padding: 10px;
   border-radius: 25px;
   min-height: 245px;
   overflow-y: auto;
-  max-height: 200px;
+  max-height: 150px;
   display: flex;
   flex-direction: column;
   margin-bottom: 20px;
   margin-top: 20px;
+  box-shadow: 0 1px 20px rgba(0, 0, 0, 0.1);
+  /* border: 2px solid rgb(228, 228, 228) */
 }
 
 .priority-headings {
   display: flex;
   justify-content: center;
   margin-top: 5px;
-  color: white; /* Set text color to white */
+  color: rgb(0, 0, 0); /* Set text color to white */
+  grid-column: span 2; /* Ensure it spans both columns */
 }
 
 .priority-column .ant-empty-description {

@@ -54,13 +54,15 @@ const BacklogEvent = ({ events, onDragStart, setEvents, onDrop }) => {
       localStorage.setItem("backlogEvents", JSON.stringify(newEvents));
       return newEvents;
     });
+
+    localStorage.removeItem("draggingEvent");
   };
 
   const priorities = [
-    { level: "must-do", color: "rgb(255, 125, 125)" },
-    { level: "should-do", color: "rgb(250, 173, 20)" },
-    { level: "nice-to-do", color: "rgb(127, 248, 67)" },
-    { level: "diligent", color: "#5b5dff" },
+    { level: "must-do", color: "rgb(255, 135, 135)" },
+    { level: "should-do", color: "rgb(255, 192, 67)" },
+    { level: "nice-to-do", color: "rgb(150, 255, 97)" },
+    { level: "diligent", color: "rgb(145, 147, 255)" },
   ];
 
   const sortedEvents = priorities.map((priority) => ({
@@ -76,7 +78,6 @@ const BacklogEvent = ({ events, onDragStart, setEvents, onDrop }) => {
           <div
             key={priority.level}
             className="priority-column"
-            style={{ backgroundColor: priority.color }}
             onDrop={(e) => handleDrop(e, priority.level)}
             onDragOver={(e) => e.preventDefault()}
           >
@@ -84,7 +85,7 @@ const BacklogEvent = ({ events, onDragStart, setEvents, onDrop }) => {
             {priority.events.length === 0 ? (
               <Empty 
                 description="" 
-                image={<WarningOutlined style={{ fontSize: 50, color: 'white', marginTop: '45px' }} />}            
+                image={<WarningOutlined style={{ fontSize: 50, color: 'grey', marginTop: '45px' }} />}            
               />
             ) : (
               priority.events.map((event, index) => (
@@ -93,9 +94,13 @@ const BacklogEvent = ({ events, onDragStart, setEvents, onDrop }) => {
                   draggable
                   onDragStart={(e) => {
                     e.dataTransfer.setData("application/json", JSON.stringify(event));
+                    localStorage.setItem("draggingEvent", JSON.stringify(event));
                     onDragStart(e, event);
                   }}                  
                   className="external-event"
+                  style={{
+                    backgroundColor: `${priority.color}`,
+                  }}
                   onClick={() => handleOpenModal(event)}
                 >
                   <span >{event.title}</span>

@@ -18,6 +18,7 @@
     font-size: larger;
     font-weight: bold;
     outline: none;
+    width:70%;
 }
 .task-card-title:focus {
     border:none; /* Add border on focus */
@@ -52,7 +53,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-top: 6px solid #a734ba ;
+    border-top: 6px solid #adadad ;
     position: relative;
 }
 
@@ -137,10 +138,6 @@
     color: rgb(0, 0, 0);
 }
 
-
-
-
-
 .task-timer {
     display: flex;
     align-items: center;
@@ -173,3 +170,44 @@
     color: #000000;
     margin-left: 20px;
 }
+
+/* Style the task action buttons */
+.task-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    justify-content: center;
+}
+
+.create-task-btn, .move-backlog-btn {
+    padding: 10px 20px;
+    background-color: #4CAF50; /* Green color */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.create-task-btn:hover, .move-backlog-btn:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
+
+.move-backlog-btn {
+    background-color: #f44336; /* Red color */
+}
+
+.move-backlog-btn:hover {
+    background-color: #d32f2f; /* Darker red on hover */
+}
+
+.priority-number{
+    font-size: 0.75em;
+    font-weight:bold;
+    background-color: rgb(206, 206, 206);
+    padding: 4px 10px 4px 10px;
+    border-radius: 30px;
+    color: rgb(0, 0, 0);
+    margin-right: 5px;
+    box-shadow: 0 1px 20px rgba(0, 0, 0, 0.1);
+  }

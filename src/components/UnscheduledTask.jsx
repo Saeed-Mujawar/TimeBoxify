@@ -88,7 +88,7 @@ const UnscheduledTask = ({ tasks, setTasks, onDrop }) => {
         {tasks.length === 0 ? (
           <Empty
             description=""
-            image={<WarningOutlined style={{ fontSize: 70, color: "black", marginTop: "30px" }} />}
+            image={<WarningOutlined style={{ fontSize: 70, color: "grey", marginTop: "30px" }} />}
           />
         ) : (
           tasks.map((task) => (
@@ -98,15 +98,6 @@ const UnscheduledTask = ({ tasks, setTasks, onDrop }) => {
           ))
         )}
       </div>
-
-      {/* {selectedTask && (
-        <EditTaskModal
-          task={selectedTask}
-          onClose={handleCloseModal}
-          onDelete={handleDelete}
-          onUpdate={handleUpdate}
-        />
-      )} */}
     </div>
   );
 };

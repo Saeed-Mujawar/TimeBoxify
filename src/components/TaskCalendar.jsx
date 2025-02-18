@@ -4,28 +4,63 @@ import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
-import { Modal, Form, Input, Select, Button, notification } from "antd";
+import { Modal, Form, Input, Select, Button, notification, InputNumber, Alert } from "antd";
 import "./TaskCalendar.css";
-import BacklogEvent from "./BacklogEvent";
-import TaskInput from "./TaskInput";
 
-const { Option } = Select;
+import CalendarTaskCard from "./CalendarTaskCard";
+
 const localizer = momentLocalizer(moment);
 const DnDCalendar = withDragAndDrop(Calendar);
 
-const TaskCalendar = ({backLogEvents, setBackLogEvents}) => {
+const TaskCalendar = ({ backLogEvents, setBackLogEvents }) => {
 
   const [events, setEvents] = useState([]);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [workingHours, setWorkingHours] = useState(() => {
-    // Load working hours from localStorage or use default values
     const savedWorkingHours = JSON.parse(localStorage.getItem("workingHours"));
     return savedWorkingHours || { start: 9, end: 17 };
-  });  const [showModal, setShowModal] = useState(false);
+  });
+  const [showModal, setShowModal] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [newEventTime, setNewEventTime] = useState(null);
   const [form] = Form.useForm();
   const startOfWeek = moment(currentDate).startOf("week").toDate();
+  const [error, setError] = useState(null);
+
+  const handleStartChange = (value) => {
+    if (value === null || value < 0 || value > 22) {  // start time can be between 0 and 22
+      setError("Start time must be between 0 and 22.");
+      return;
+    }
+
+    if (value >= workingHours.end) {
+      setError("Start time must be less than end time.");
+      return;
+    }
+
+    const updatedHours = { ...workingHours, start: value };
+    setWorkingHours(updatedHours);
+    localStorage.setItem("workingHours", JSON.stringify(updatedHours));
+    setError("");
+  };
+
+  const handleEndChange = (value) => {
+    if (value === null || value < 1 || value > 23) {  // end time must be between 1 and 23
+      setError("End time must be between 1 and 23.");
+      return;
+    }
+
+    if (value <= workingHours.start) {
+      setError("End time must be greater than start time.");
+      return;
+    }
+
+    const updatedHours = { ...workingHours, end: value };
+    setWorkingHours(updatedHours);
+    localStorage.setItem("workingHours", JSON.stringify(updatedHours));
+    setError("");
+  };
+
 
   // Save backlog events to localStorage whenever they change
   useEffect(() => {
@@ -33,7 +68,6 @@ const TaskCalendar = ({backLogEvents, setBackLogEvents}) => {
   }, [backLogEvents]);
 
   useEffect(() => {
-    // Save working hours to localStorage whenever they change
     localStorage.setItem("workingHours", JSON.stringify(workingHours));
   }, [workingHours]);
 
@@ -61,13 +95,17 @@ const TaskCalendar = ({backLogEvents, setBackLogEvents}) => {
     }
   }, [events]);
 
-
-
   useEffect(() => {
     localStorage.setItem("calendarDate", currentDate);
   }, [currentDate]);
 
-  const handleSelectSlot = ({ start, end }) => {
+  const handleSelectSlot = ({ start, end, action }) => {
+    // If the action is a drag operation, do nothing
+    if (action === "drag") {
+      return;
+    }
+
+    // Otherwise, open the modal for creating a new event
     setSelectedEvent(null);
     setNewEventTime({ start, end });
     form.resetFields();
@@ -89,94 +127,15 @@ const TaskCalendar = ({backLogEvents, setBackLogEvents}) => {
     setCurrentDate(startOfWeek); // Update currentDate to the start of the week
   };
 
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-
-    const draggedData = e.dataTransfer.getData("application/json");
-
-    // Check if draggedData is empty
-    if (!draggedData) {
-        console.warn("No valid data received in drag event.");
-        return;
-    }
-
-    let eventData;
-    try {
-        eventData = JSON.parse(draggedData);
-    } catch (error) {
-        console.error("Error parsing dropped data:", error);
-        return;
-    }
-
-    const { start, end } = getSlotInfo(e); // Get the drop position (start and end time)
-    
-    // Retrieve backlog events from local storage
-    const backlogEvents = JSON.parse(localStorage.getItem("backlogEvents")) || [];
-
-    // Check if the dropped event exists in backlogEvents
-    const isFromBacklog = backlogEvents.some(event => event.id === eventData.id);
-    if (!isFromBacklog) {
-        console.warn("Dropped item is not from backlogEvents");
-        return; // Exit if it's not a backlog event
-    }
-    const newEvent = {
-      ...eventData,
-      start,
-      end,
-      id: Date.now(), // Generate a unique ID for the new event
-    };
-
-    setEvents((prevEvents) => [...prevEvents, newEvent]);
-
-    // Remove the event from backlog and update localStorage
-    setBackLogEvents((prevBacklog) => {
-      const updatedBacklog = prevBacklog.filter((event) => event.id !== eventData.id);
-      localStorage.setItem("backlogEvents", JSON.stringify(updatedBacklog)); // Sync immediately
-      return updatedBacklog;
-    });
-  
-  };
-
-  const getSlotInfo = (e) => {
-    const calendarBounds = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - calendarBounds.left; // X position relative to the calendar
-    const y = e.clientY - calendarBounds.top; // Y position relative to the calendar
-
-    // Calculate the time slot based on the mouse position
-    const slotWidth = calendarBounds.width / 7; // Divide by 7 days in a week
-    const slotHeight = calendarBounds.height / (workingHours.end - workingHours.start); // Divide by working hours
-
-    const dayIndex = Math.floor(x / slotWidth); // Day of the week (0 = Sunday, 6 = Saturday)
-    const hourIndex = Math.floor(y / slotHeight); // Hour of the day (0 = workingHours.start)
-
-    const start = new Date(startOfWeek); 
-    start.setDate(start.getDate() + dayIndex); // Set the day based on calculated index
-    start.setHours(workingHours.start + hourIndex, 0, 0, 0); // Set the hour
-
-    const end = new Date(start);
-    end.setHours(start.getHours() + 1); // Default duration: 1 hour
-
-    return { start, end };
-  };
-
-
-
   const handleEventDelete = () => {
     if (selectedEvent) {
-      // Delete the event from the state
       const updatedEvents = events.filter((evt) => evt.id !== selectedEvent.id);
 
-      // Save the updated events back to localStorage
-      localStorage.setItem("calendarEvents", JSON.stringify(updatedEvents));
-
-      // Update the state with the new events list
       setEvents(updatedEvents);
 
-      // Close the modal
+      localStorage.setItem("calendarEvents", JSON.stringify(updatedEvents));
       setShowModal(false);
 
-      // Show a success notification
       notification.success({
         message: "Event Deleted",
         description: `The event "${selectedEvent.title}" was successfully deleted.`,
@@ -185,45 +144,45 @@ const TaskCalendar = ({backLogEvents, setBackLogEvents}) => {
   };
 
   const handleEventMove = ({ event, start, end }) => {
+    const taskDuration = moment(end).diff(moment(start), "minutes");
     setEvents((prevEvents) =>
-      prevEvents.map((evt) => (evt.id === event.id ? { ...evt, start, end } : evt))
+      prevEvents.map((evt) =>
+        evt.id === event.id ? { ...evt, start, end, taskDuration } : evt
+      )
     );
   };
 
-  const handleFormSubmit = () => {
-    form
-      .validateFields()
-      .then((values) => {
-        const { title, description, priority } = values;
+  const handleFormSubmit = (values) => {
+    const { title, description, priority } = values;
 
-        if (selectedEvent) {
-          setEvents((prevEvents) =>
-            prevEvents.map((evt) =>
-              evt.id === selectedEvent.id ? { ...evt, title, description, priority } : evt
-            )
-          );
-          notification.success({
-            message: "Event Updated",
-            description: `The event "${title}" was successfully updated.`,
-          });
-        } else if (newEventTime) {
-          const newEvent = {
-            start: newEventTime.start,
-            end: newEventTime.end,
-            title,
-            description,
-            priority,
-            id: Date.now(),
-          };
-          setEvents((prevEvents) => [...prevEvents, newEvent]);
-          notification.success({
-            message: "Event Created",
-            description: `The event "${title}" was successfully created.`,
-          });
-        }
-        setShowModal(false);
-      })
-      .catch((info) => console.log("Form validation failed:", info));
+    if (selectedEvent) {
+      setEvents((prevEvents) =>
+        prevEvents.map((evt) =>
+          evt.id === selectedEvent.id ? { ...evt, title, description, priority } : evt
+        )
+      );
+      notification.success({
+        message: "Event Updated",
+        description: `The event "${title}" was successfully updated.`,
+      });
+    } else if (newEventTime) {
+      const taskDuration = moment(newEventTime.end).diff(moment(newEventTime.start), "minutes");
+      const newEvent = {
+        start: newEventTime.start,
+        end: newEventTime.end,
+        title,
+        description,
+        priority,
+        taskDuration,
+        id: Date.now(),
+      };
+      setEvents((prevEvents) => [...prevEvents, newEvent]);
+      notification.success({
+        message: "Event Created",
+        description: `The event "${title}" was successfully created.`,
+      });
+    }
+    setShowModal(false);
   };
 
   const eventStyleGetter = (event) => {
@@ -253,126 +212,133 @@ const TaskCalendar = ({backLogEvents, setBackLogEvents}) => {
   maxTime.setHours(workingHours.end, 0, 0);
 
   const handleBacklogTask = () => {
-    if (selectedEvent) {
-      const { title, description, priority, id } = selectedEvent;
-      setBackLogEvents((prevEvents) => [...prevEvents, { title, description, priority, id }]);
-      localStorage.setItem("backlogEvents", JSON.stringify([...backLogEvents, { title, description, priority, id }]));
-      handleEventDelete();
-      setShowModal(false);
-      notification.success({
-        message: "Task Added to Backlog",
-        description: `The task "${title}" was successfully moved to backlog.`,
-      });
-    }
-  };
-  const onDrag = (e) => {
-    // e.preventDefault();  // Allow normal drag behavior to proceed without blocking
+    if (!selectedEvent) return;
+
+    const { title, description, priority, id, taskDuration, key } = selectedEvent;
+
+    handleEventDelete(); // Ensure event is removed before updating state
+
+    setBackLogEvents((prevBacklog) => {
+      const updatedBacklog = [...prevBacklog, { title, description, priority, id, taskDuration, key }];
+
+      localStorage.setItem("backlogEvents", JSON.stringify(updatedBacklog));
+
+      return updatedBacklog;
+    });
+
+    setShowModal(false);
+
+    notification.success({
+      message: "Task Added to Backlog",
+      description: `The task "${title}" was successfully moved to backlog.`,
+    });
   };
 
-  const onDragOver = (e) => {
-    e.preventDefault(); // Allow drop
-  
-    const scrollContainer = e.target.closest('.calendar-wrapper');
-    if (!scrollContainer) return;
-  
-    const { clientHeight, scrollTop, scrollHeight } = scrollContainer;
-  
-    // Check if the mouse is near the top or bottom of the container to trigger scroll
-    if (e.clientY > scrollHeight - 50) {
-      scrollContainer.scrollTop = scrollTop + 10;
-    } else if (e.clientY < 50) {
-      scrollContainer.scrollTop = scrollTop - 10;
+  const handleDropFromOutside = ({ start }) => {
+    const draggedData = localStorage.getItem("draggingEvent");
+    if (!draggedData) {
+      console.warn("No valid event found in storage.");
+      return;
     }
-  
-    // Smooth scrolling
-    scrollContainer.style.scrollBehavior = 'smooth';
+
+    let eventData;
+    try {
+      eventData = JSON.parse(draggedData);
+    } catch (error) {
+      console.error("Error parsing dragged event:", error);
+      return;
+    }
+
+    // Retrieve backlog events from local storage
+    const backlogEvents = JSON.parse(localStorage.getItem("backlogEvents")) || [];
+
+    // Check if the event is from backlog
+    const isFromBacklog = backlogEvents.some(event => event.id === eventData.id);
+    if (!isFromBacklog) {
+      console.warn("Dropped item is not from backlogEvents");
+      return;
+    }
+
+    // Calculate the end time using taskDuration
+    const end = moment(start).add(eventData.taskDuration, "minutes").toDate();
+    // console.log(end);
+    const newEvent = {
+      ...eventData,
+      start,
+      end,
+      id: Date.now(),
+    };
+
+    setEvents((prevEvents) => [...prevEvents, newEvent]);
+
+    // Remove from backlog and update local storage
+    const updatedBacklog = backlogEvents.filter(event => event.id !== eventData.id);
+    setBackLogEvents(updatedBacklog);
+    localStorage.setItem("backlogEvents", JSON.stringify(updatedBacklog));
+    localStorage.removeItem("draggingEvent"); // Clear after drop
+
+    notification.success({
+      message: "Event Added",
+      description: `The event "${newEvent.title}" was added successfully.`,
+    });
+
+  };
+
+  const dragFromOutsideItem = () => {
+    try {
+      return JSON.parse(localStorage.getItem("draggingEvent")) || null;
+    } catch (error) {
+      console.error("Error parsing dragged event:", error);
+      return null;
+    }
   };
 
   return (
     <div className="calendar-container">
-        {/* <BacklogEvent events={backLogEvents} setEvents={setBackLogEvents} onDragStart={onDragStart}/> */}
       <h3 className="external-events-title">Calendar</h3>
       <div className="working-hour-box">
         <div className="working-hours-container">
           <label className="working-hours-label">Set Working Hours:</label>
           <div className="working-hours-inputs">
-            <input
-              type="number"
-              value={workingHours.start}
+            <InputNumber
               min={0}
               max={23}
-              onChange={(e) => setWorkingHours({ ...workingHours, start: Number(e.target.value) })}
+              value={workingHours.start}
+              onChange={handleStartChange}
               className="working-hours-input"
             />
             <span className="working-hours-separator"> to </span>
-            <input
-              type="number"
-              value={workingHours.end}
+            <InputNumber
               min={1}
               max={24}
-              onChange={(e) => setWorkingHours({ ...workingHours, end: Number(e.target.value) })}
+              value={workingHours.end}
+              onChange={handleEndChange}
               className="working-hours-input"
             />
           </div>
+        {error && (
+          <Alert
+            message={error}
+            type="error"
+            showIcon
+            style={{ margin: 10, fontSize: '14px' }}
+          />
+        )}
         </div>
-
       </div>
 
-      <Modal
-        title={selectedEvent ? "Edit Task" : "Create Task"}
+      <CalendarTaskCard
         visible={showModal}
-        onCancel={() => setShowModal(false)}
-        footer={[
-          selectedEvent && (
-            <Button key="delete" danger onClick={handleEventDelete}>
-              Delete Task
-            </Button>
-          ),
-          selectedEvent && (
-            <Button key="backlog" type="dashed" onClick={handleBacklogTask}>
-              Move to Backlog
-            </Button>
-          ),
-          <Button key="submit" type="primary" onClick={handleFormSubmit}>
-            {selectedEvent ? "Save Changes" : "Create Task"}
-          </Button>,
-        ]}
-      >
-        <Form form={form} layout="vertical" name="eventForm">
-          <Form.Item
-            label="Title"
-            name="title"
-            rules={[{ required: true, message: "Please input the Task title!" }]}
-          >
-            <Input />
-          </Form.Item>
+        onClose={() => setShowModal(false)}
+        selectedEvent={selectedEvent}
+        onSubmit={(values) => handleFormSubmit(values)}
+        onDelete={handleEventDelete}
+        onMoveToBacklog={handleBacklogTask}
+      />
 
-          <Form.Item label="Description" name="description">
-            <Input.TextArea />
-          </Form.Item>
-
-          <Form.Item
-            label="Priority"
-            name="priority"
-            rules={[{ required: true, message: "Please select a priority!" }]}
-          >
-            <Select>
-              <Option value="nice-to-do">Nice-To-Do</Option>
-              <Option value="should-do">Should-Do</Option>
-              <Option value="must-do">Must-Do</Option>
-              <Option value="diligent">Deiligent</Option>
-            </Select>
-          </Form.Item>
-        </Form>
-      </Modal>
-
-      <div
-        className="calendar-wrapper"
-        onDrop={handleDrop}
-        onDragOver={onDragOver} // Required to allow dropping
-        onDrag={onDrag}
-      >
+      <div className="calendar-wrapper">
         <DnDCalendar
+          key={events.length} // Force re-render when events change
           localizer={localizer}
           events={events}
           startAccessor="start"
@@ -385,6 +351,9 @@ const TaskCalendar = ({backLogEvents, setBackLogEvents}) => {
           date={currentDate}
           defaultView={Views.WEEK}
           onView={Views.WEEK}
+          onDropFromOutside={handleDropFromOutside}
+          dragFromOutsideItem={dragFromOutsideItem}
+          draggableAccessor={(event) => true}
           onNavigate={handleNavigate}
           onSelectSlot={handleSelectSlot}
           onSelectEvent={handleEventEdit}
