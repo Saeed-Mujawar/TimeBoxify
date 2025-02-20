@@ -43,7 +43,7 @@ const BacklogEvent = ({ events, onDragStart, setEvents, onDrop }) => {
   const handleDrop = (e, priority) => {
     e.preventDefault();
     const droppedData = JSON.parse(e.dataTransfer.getData("application/json"));
-
+  
     onDrop(droppedData.id);
 
     const updatedEvent = { ...droppedData, priority };
@@ -51,10 +51,10 @@ const BacklogEvent = ({ events, onDragStart, setEvents, onDrop }) => {
     setEvents((prev) => {
       const filteredEvents = prev.filter(event => event.id !== droppedData.id);
       const newEvents = [...filteredEvents, updatedEvent];
-      localStorage.setItem("backlogEvents", JSON.stringify(newEvents));
-      return newEvents;
+    localStorage.setItem("backlogEvents", JSON.stringify(newEvents));
+return newEvents;
     });
-
+  
     localStorage.removeItem("draggingEvent");
   };
 
@@ -82,10 +82,11 @@ const BacklogEvent = ({ events, onDragStart, setEvents, onDrop }) => {
             onDragOver={(e) => e.preventDefault()}
           >
             <h4 className="priority-headings">{priority.level.toUpperCase()}</h4>
+            <div className="priority-column-inner">
             {priority.events.length === 0 ? (
-              <Empty 
-                description="" 
-                image={<WarningOutlined style={{ fontSize: 50, color: 'grey', marginTop: '45px' }} />}            
+              <Empty
+                description=""
+                image={<WarningOutlined style={{ fontSize: 50, color: 'grey', marginTop: '45px' }} />}
               />
             ) : (
               priority.events.map((event, index) => (
@@ -96,18 +97,27 @@ const BacklogEvent = ({ events, onDragStart, setEvents, onDrop }) => {
                     e.dataTransfer.setData("application/json", JSON.stringify(event));
                     localStorage.setItem("draggingEvent", JSON.stringify(event));
                     onDragStart(e, event);
-                  }}                  
+                  }}
                   className="external-event"
                   style={{
-                    backgroundColor: `${priority.color}`,
+                    borderTop: `6px solid ${priority.color}`,
                   }}
                   onClick={() => handleOpenModal(event)}
                 >
-                  <span >{event.title}</span>
-                  <span className="priority-number">Priority {index + 1}</span>
+                  <span>
+                    {event.title.length > 22 ? `${event.title.slice(0, 22)}...` : event.title}
+                    {/* {event.title} */}
+                  </span>
+                  <span 
+                    className="priority-number"
+                    style={{
+                      backgroundColor: `${priority.color}`,
+                    }}
+                  >Priority {index + 1}</span>
                 </div>
               ))
             )}
+          </div>
           </div>
         ))}
       </div>
@@ -119,6 +129,10 @@ const BacklogEvent = ({ events, onDragStart, setEvents, onDrop }) => {
             sortedEvents
               .find(p => p.level === selectedEvent.priority)
               ?.events.findIndex(event => event.id === selectedEvent.id) + 1
+          }
+          priorityColor={
+            sortedEvents
+              .find(p => p.level === selectedEvent.priority)?.color // Find the priority color
           }
           onClose={handleModalClose}
           onDelete={handleDelete}

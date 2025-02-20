@@ -24,9 +24,9 @@
 
 /* Style for the container holding the events */
 .external-events {
-  padding: 0 10px ;
+  padding: 0 20px ;
   display: grid;
-  grid-template-columns: repeat(4, 1fr); /* Create 3 equal columns */
+  grid-template-columns: repeat(2, 1fr); /* Create 3 equal columns */
   gap: 10px; /* Add spacing between columns */
 
 }
@@ -38,11 +38,11 @@
   background: #fff;
   border-radius: 10px;
   cursor: grab;
-  /* height: 20px; */
+  height: 20px;
   justify-content: space-between;
   align-items: center;
   display: flex;
-  box-shadow: 0 1px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
   font-size: 1.1em;
   font-weight: bold;
   /* border-top: 6px solid #a734ba ; */
@@ -51,7 +51,7 @@
 .external-event .priority-number{
   font-size: 0.75em;
   font-weight:bold;
-  background-color: rgb(255, 255, 255);
+  background-color: rgb(230, 230, 230);
   padding: 3px 10px 3px 10px;
   border-radius: 30px;
   color: rgb(0, 0, 0);
@@ -81,6 +81,15 @@
   margin-top: 20px;
   box-shadow: 0 1px 20px rgba(0, 0, 0, 0.1);
   /* border: 2px solid rgb(228, 228, 228) */
+}
+
+/* Style for the inner grid within each priority column */
+.priority-column-inner {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Two columns */
+  gap: 10px; /* Spacing between tasks */
+  flex-grow: 1;
+  overflow-y: auto; /* Enable scrolling if content overflows */
 }
 
 .priority-headings {

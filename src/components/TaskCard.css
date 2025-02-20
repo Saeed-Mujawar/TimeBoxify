@@ -93,7 +93,7 @@
 
 
 .actions-grid {
-    display:flex; 
+    display:grid; 
     grid-template-columns: repeat(3, 1fr); /* 3 columns */
     flex-wrap: wrap;
     margin: 10px;
@@ -107,12 +107,12 @@
     cursor: pointer;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: left;
     background-color: #ffffff;
     border: none;
     border-radius: 5px;
     transition: background-color 0.2s ease, transform 0.2s ease; /* Smooth hover effect */
-    white-space: nowrap;
+    /* white-space: nowrap; */
     margin:2px
 }
 
@@ -123,8 +123,8 @@
 
 .action-icon {
     font-size: 1.4em; /* Larger icons */
-    margin-bottom: 5px; /* Space between icon and text */
-    margin-right: 5px; 
+    margin: 4px;
+
 }
 
 .action-text {

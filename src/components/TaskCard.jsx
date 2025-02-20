@@ -4,9 +4,10 @@ import {
     MessageOutlined, MailOutlined, DesktopOutlined, UserOutlined,
     CalendarOutlined, SearchOutlined, ToolOutlined, BookOutlined
 } from "@ant-design/icons";
+import { FaPhoneAlt, FaComment, FaEnvelope, FaDesktop, FaUserAlt, FaCalendarAlt,  FaBook, FaTools, FaBrain, FaLaptopCode } from 'react-icons/fa';
 import "./TaskCard.css";
 
-const TaskCard = ({ task, onClose, onDelete, onUpdate, priorityNumber, visible }) => {
+const TaskCard = ({ task, onClose, onDelete, onUpdate, priorityNumber, visible, priorityColor }) => {
     const [title, setTitle] = useState(task.title);
     const [description, setDescription] = useState(task.description);
     const [selectedActions, setSelectedActions] = useState(task.key || []);
@@ -42,7 +43,9 @@ const TaskCard = ({ task, onClose, onDelete, onUpdate, priorityNumber, visible }
 
     return (
         <div className="task-card">
-            <div className="task-card-header">
+            <div className="task-card-header" style={{
+                    borderTop: `6px solid ${priorityColor}`,
+                  }}>
                 <input
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
@@ -51,7 +54,11 @@ const TaskCard = ({ task, onClose, onDelete, onUpdate, priorityNumber, visible }
                     onFocus={(e) => e.target.select()}  // Select all text when the input is focused
                 />
                 {priorityNumber &&(
-                    <span className="priority-number">Priority {priorityNumber}</span>
+                    <span className="priority-number"
+                    style={{
+                        backgroundColor: `${priorityColor}`,
+                      }}
+                    >Priority {priorityNumber}</span>
                 )}
                 <PlusCircleOutlined className="plus-icon"/>
             </div>
@@ -64,23 +71,23 @@ const TaskCard = ({ task, onClose, onDelete, onUpdate, priorityNumber, visible }
             />
             <div className="actions-grid">
                 {[{
-                    key: "call", icon: <PhoneOutlined />, text: "Call"
+                    key: "call", icon: <FaPhoneAlt />, text: "Call"
                 }, {
-                    key: "message", icon: <MessageOutlined />, text: "Message"
+                    key: "message", icon: <FaComment />, text: "Message"
                 }, {
-                    key: "email", icon: <MailOutlined />, text: "Email"
+                    key: "email", icon: <FaEnvelope />, text: "Email"
                 }, {
-                    key: "online", icon: <DesktopOutlined />, text: "Online"
+                    key: "online", icon: <FaLaptopCode />, text: "Online"
                 }, {
-                    key: "inPerson", icon: <UserOutlined />, text: "In-Person"
+                    key: "inPerson", icon: <FaUserAlt />, text: "In-Person"
                 }, {
-                    key: "scheduleLater", icon: <CalendarOutlined />, text: "Schedule Later"
+                    key: "scheduleLater", icon: <FaCalendarAlt />, text: "Schedule Later"
                 }, {
-                    key: "deepWork", icon: <SearchOutlined />, text: "Deep Work"
+                    key: "deepWork", icon: <FaBrain />, text: "Deep Work"
                 }, {
-                    key: "research", icon: <BookOutlined />, text: "Research"
+                    key: "research", icon: <FaBook />, text: "Research"
                 }, {
-                    key: "admin", icon: <ToolOutlined />, text: "Admin"
+                    key: "admin", icon: <FaTools />, text: "Admin"
                 }].map(({ key: actionKey, icon, text }) => (
                     <button
                         key={actionKey}

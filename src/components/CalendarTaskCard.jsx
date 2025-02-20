@@ -42,7 +42,7 @@ const CalendarTaskCard = ({
         ),
         selectedEvent && (
           <Button key="backlog" type="dashed" onClick={onMoveToBacklog}>
-            Move to Backlog
+            Move to Prioritization
           </Button>
         ),
         <Button key="submit" type="primary" onClick={handleSubmit}>
