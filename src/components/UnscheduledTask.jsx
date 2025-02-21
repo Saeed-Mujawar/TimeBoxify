@@ -87,7 +87,11 @@ const UnscheduledTask = ({ tasks, setTasks, onDrop }) => {
       <div className="external-tasks">
         {tasks.length === 0 ? (
           <Empty
-            description=""
+            description={
+              <span>
+                Start by listing everything you need to do—focus solely on the task names without adding details.<br/> Perform a brain dump of all your tasks. As you go, ensure each task aligns with your objectives for the week.
+              </span>
+            }
             image={<WarningOutlined style={{ fontSize: 70, color: "grey", marginTop: "30px" }} />}
           />
         ) : (

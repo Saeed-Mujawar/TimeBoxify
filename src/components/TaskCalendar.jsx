@@ -295,7 +295,7 @@ const TaskCalendar = ({ backLogEvents, setBackLogEvents }) => {
 
   return (
     <div className="calendar-container">
-      <h3 className="external-events-title">Calendar</h3>
+      <h3 className="calendar-title">Calendar</h3>
       <div className="working-hour-box">
         <div className="working-hours-container">
           <label className="working-hours-label">Set Working Hours:</label>

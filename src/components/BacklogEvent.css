@@ -4,6 +4,9 @@
   width: 100%;
   background: #ffffff;
   border-radius: 10px;
+  justify-content: center;
+  align-items: center; /* Optionally center vertically if needed */
+  box-sizing: border-box;
 }
 
 /* Style for the title */
@@ -15,7 +18,8 @@
   font-size: 18px;
   font-weight: bold;
   text-align: center;
-  margin: 0px;
+  margin-right: 20px;
+  margin-left: 20px;
   color: #333;
   margin-bottom: 15px;
   box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
@@ -24,7 +28,7 @@
 
 /* Style for the container holding the events */
 .external-events {
-  padding: 0 20px ;
+  padding: 0 40px ;
   display: grid;
   grid-template-columns: repeat(2, 1fr); /* Create 3 equal columns */
   gap: 10px; /* Add spacing between columns */
@@ -64,6 +68,10 @@
   align-items: center; /* Center vertically */
   text-align: center;
   grid-column: span 3;
+}
+
+.priority-column-inner .ant-empty-image{
+  height: 50px;
 }
 
 /* Style for each priority column */

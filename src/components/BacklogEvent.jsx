@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Empty } from "antd";
-import { WarningOutlined } from "@ant-design/icons";
+import { Popover } from 'antd';
+import { InfoCircleOutlined, WarningOutlined } from "@ant-design/icons";
 import "./BacklogEvent.css";
 import EditTaskModal from "./helperComponents/EditTaskModal";
+import PriorityHeading from "./helperComponents/PriorityHeading";
 
 const BacklogEvent = ({ events, onDragStart, setEvents, onDrop }) => {
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -43,7 +45,7 @@ const BacklogEvent = ({ events, onDragStart, setEvents, onDrop }) => {
   const handleDrop = (e, priority) => {
     e.preventDefault();
     const droppedData = JSON.parse(e.dataTransfer.getData("application/json"));
-  
+
     onDrop(droppedData.id);
 
     const updatedEvent = { ...droppedData, priority };
@@ -51,10 +53,10 @@ const BacklogEvent = ({ events, onDragStart, setEvents, onDrop }) => {
     setEvents((prev) => {
       const filteredEvents = prev.filter(event => event.id !== droppedData.id);
       const newEvents = [...filteredEvents, updatedEvent];
-    localStorage.setItem("backlogEvents", JSON.stringify(newEvents));
-return newEvents;
+      localStorage.setItem("backlogEvents", JSON.stringify(newEvents));
+      return newEvents;
     });
-  
+
     localStorage.removeItem("draggingEvent");
   };
 
@@ -81,43 +83,76 @@ return newEvents;
             onDrop={(e) => handleDrop(e, priority.level)}
             onDragOver={(e) => e.preventDefault()}
           >
-            <h4 className="priority-headings">{priority.level.toUpperCase()}</h4>
+            <PriorityHeading priority={priority} />
             <div className="priority-column-inner">
-            {priority.events.length === 0 ? (
-              <Empty
-                description=""
-                image={<WarningOutlined style={{ fontSize: 50, color: 'grey', marginTop: '45px' }} />}
-              />
-            ) : (
-              priority.events.map((event, index) => (
-                <div
-                  key={event.id}
-                  draggable
-                  onDragStart={(e) => {
-                    e.dataTransfer.setData("application/json", JSON.stringify(event));
-                    localStorage.setItem("draggingEvent", JSON.stringify(event));
-                    onDragStart(e, event);
-                  }}
-                  className="external-event"
-                  style={{
-                    borderTop: `6px solid ${priority.color}`,
-                  }}
-                  onClick={() => handleOpenModal(event)}
-                >
-                  <span>
-                    {event.title.length > 22 ? `${event.title.slice(0, 22)}...` : event.title}
-                    {/* {event.title} */}
+              {priority.events.length === 0 ? (
+                <Empty
+                description={
+                  <span style={{ color: 'grey' }}>
+                    {priority.level === "must-do" && (
+                      <>
+                        <strong>Step 1:</strong> Drag and drop your tasks from the backlog into the appropriate prioritized square.<br />
+                        <strong>Step 2:</strong> Reorder the tasks within each square based on their urgency and importance.<br />
+                        <strong>Remember</strong>, tasks in the 'Must-Do' box are essential and have serious consequences if not completed. Prioritize these first to ensure maximum impact!<br />
+                      </>
+                    )}
+                    {priority.level === "should-do" && (
+                      <>
+                        <strong>Step 1:</strong> Drag and drop your tasks from the backlog into the appropriate prioritized square.<br />
+                        <strong>Step 2:</strong> Reorder the tasks within each square based on their urgency and importance.<br />
+                        <strong>Remember</strong>, tasks in the 'Should-Do' box are important but with mild consequences. If you don’t complete them, someone may be inconvenienced or unhappy, but they aren't as urgent as 'Must-Do' tasks. The rule is to never work on a 'Should-Do' task when a 'Must-Do' task is still pending.<br />
+                      </>
+                    )}
+                    {priority.level === "nice-to-do" && (
+                      <>
+                        <strong>Step 1:</strong> Drag and drop your tasks from the backlog into the appropriate prioritized square.<br />
+                        <strong>Step 2:</strong> Reorder the tasks within each square based on their urgency and importance.<br />
+                        <strong>Remember</strong>, tasks in the 'Nice-to-Do' box are things that would be nice to do, but they carry no significant consequences.<br />
+                      </>
+                    )}
+                    {priority.level === "diligent" && (
+                      <>
+                        <strong>Step 1:</strong> Drag and drop your tasks from the backlog into the appropriate prioritized square.<br />
+                        <strong>Step 2:</strong> Reorder the tasks within each square based on their urgency and importance.<br />
+                        <strong>Remember</strong>, tasks in the 'Diligent' box are either things you can delegate or tasks that require too much time or expertise to handle efficiently on your own.<br />
+                      </>
+                    )}
                   </span>
-                  <span 
-                    className="priority-number"
-                    style={{
-                      backgroundColor: `${priority.color}`,
+                }
+                
+                image={<WarningOutlined style={{ fontSize: 50, color: 'grey', marginBottom: "0px"}} />}
+              />
+
+              ) : (
+                priority.events.map((event, index) => (
+                  <div
+                    key={event.id}
+                    draggable
+                    onDragStart={(e) => {
+                      e.dataTransfer.setData("application/json", JSON.stringify(event));
+                      localStorage.setItem("draggingEvent", JSON.stringify(event));
+                      onDragStart(e, event);
                     }}
-                  >Priority {index + 1}</span>
-                </div>
-              ))
-            )}
-          </div>
+                    className="external-event"
+                    style={{
+                      borderTop: `6px solid ${priority.color}`,
+                    }}
+                    onClick={() => handleOpenModal(event)}
+                  >
+                    <span>
+                      {event.title.length > 20 ? `${event.title.slice(0, 20)}...` : event.title}
+                      {/* {event.title} */}
+                    </span>
+                    <span
+                      className="priority-number"
+                      style={{
+                        backgroundColor: `${priority.color}`,
+                      }}
+                    >Priority {index + 1}</span>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         ))}
       </div>

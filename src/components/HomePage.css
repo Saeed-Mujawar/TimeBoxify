@@ -1,0 +1,36 @@
+/* Home Page Container */
+.home-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    height: 100vh;
+    text-align: center;
+    background-color: #ffffff;
+    padding: 20px;
+  }
+  
+  /* Heading */
+  .home-container h1 {
+    font-size: 24px;
+    color: #333;
+  }
+  
+  /* Button Styling */
+  .connect-button {
+    background-color: #e2e2e2;
+    color: rgb(0, 0, 0);
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+    box-shadow: 0 1px 15px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s ease-in-out;
+  }
+  
+  .connect-button:hover {
+    background-color: #cecece;
+  }
+  

@@ -6,8 +6,11 @@ import "./App.css";
 import BacklogEvent from "./components/BacklogEvent.jsx";
 import UnscheduledTask from "./components/UnscheduledTask.jsx";
 import TaskCard from "./components/TaskCard.jsx";
+import { Button } from "antd";
+import HomePage from "./components/HomePage.jsx";
 
 const App = () => {
+  const [isConnected, setIsConnected] = useState(false); // ✅ Track Google Calendar connection
 
   // Load backlog events from localStorage on component mount
   const [backLogEvents, setBackLogEvents] = useState(() => {
@@ -41,6 +44,13 @@ const App = () => {
 
   };
 
+
+  const handleGoogleConnect = () => {
+    // TODO: Add Google Calendar authentication logic here
+    console.log("Connecting to Google Calendar...");
+    setIsConnected(true);
+  };
+
   const onDragStart = (e, event) => {
     e.dataTransfer.setData("text/plain", JSON.stringify(event));
   };
@@ -62,14 +72,20 @@ const App = () => {
 
 
   return (
-    <div className="app"
-    >
+    <div className="app">
       <Navbar />
-      {/* <TaskCard/> */}
-      <TaskInput onAddTask={handleAddTask} />
-      <UnscheduledTask tasks={unscheduledEvents} setTasks={setUnscheduledEvents} onDrop={handleTaskMove} />
-      <BacklogEvent events={backLogEvents} setEvents={setBackLogEvents} onDragStart={onDragStart} onDrop={handleTaskMove} />
-      <TaskCalendar backLogEvents={backLogEvents} setBackLogEvents={setBackLogEvents} />
+      {!isConnected ? (
+        <>
+          <HomePage onConnect={handleGoogleConnect} />        
+        </>
+      ) : (
+        <>
+          <TaskInput onAddTask={handleAddTask} />
+          <UnscheduledTask tasks={unscheduledEvents} setTasks={setUnscheduledEvents} onDrop={handleTaskMove} />
+          <BacklogEvent events={backLogEvents} setEvents={setBackLogEvents} onDragStart={onDragStart} onDrop={handleTaskMove} />
+          <TaskCalendar backLogEvents={backLogEvents} setBackLogEvents={setBackLogEvents} />
+        </>
+      )}
     </div>
   );
 };

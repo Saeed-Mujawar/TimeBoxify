@@ -11,7 +11,7 @@ const TaskInput = ({ onAddTask }) => {
         if (title.trim()) {
             onAddTask({ title, description, priority, id: Date.now() });
             setTitle("");
-            setDescription(""); 
+            setDescription("");
             setPriority("");
         }
     };
@@ -25,16 +25,16 @@ const TaskInput = ({ onAddTask }) => {
     return (
         <div className="task-input-container">
             <input
-                placeholder="Task Title"
+                placeholder="Type the title of your task and press enter to add it to the backlog below."
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 className="task-input"
                 onKeyPress={handleKeyPress}
             />
 
-            <div className="task-select-button-container"> 
+            <div className="task-select-button-container">
 
-                <button  onClick={handleAddTask}>
+                <button onClick={handleAddTask}>
                     Add Task
                 </button>
             </div>
