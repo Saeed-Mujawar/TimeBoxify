@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Empty } from "antd";
-import { WarningOutlined } from "@ant-design/icons";
+import { PlusSquareOutlined, WarningOutlined } from "@ant-design/icons";
 import "./UnscheduledTask.css";
 import EditTaskModal from "./helperComponents/EditTaskModal";
 import TaskCard from "./TaskCard";
@@ -72,6 +72,7 @@ const UnscheduledTask = ({ tasks, setTasks, onDrop }) => {
       }
       return prev;
     });
+    localStorage.removeItem("draggingEvent");
   };
 
   const handleUpdate = (updatedTask) => {
@@ -92,11 +93,15 @@ const UnscheduledTask = ({ tasks, setTasks, onDrop }) => {
                 Start by listing everything you need to do—focus solely on the task names without adding details.<br/> Perform a brain dump of all your tasks. As you go, ensure each task aligns with your objectives for the week.
               </span>
             }
-            image={<WarningOutlined style={{ fontSize: 70, color: "grey", marginTop: "30px" }} />}
+            image={<PlusSquareOutlined style={{ fontSize: 70, color: "grey", marginTop: "30px" }} />}
           />
         ) : (
           tasks.map((task) => (
-            <div key={task.id} draggable onDragStart={(e) => onDragStart(e, task)}>
+            <div key={task.id} draggable onDragStart={(e) => {
+              localStorage.setItem("draggingEvent", JSON.stringify(task));
+              onDragStart(e, task)
+            }
+            }>
               <TaskCard task={task} onDelete={handleDelete} onUpdate={handleUpdate} />
             </div>
           ))

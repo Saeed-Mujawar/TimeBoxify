@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Empty } from "antd";
-import { Popover } from 'antd';
-import { InfoCircleOutlined, WarningOutlined } from "@ant-design/icons";
+import { WarningOutlined,PlusSquareOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import "./BacklogEvent.css";
 import EditTaskModal from "./helperComponents/EditTaskModal";
 import PriorityHeading from "./helperComponents/PriorityHeading";
@@ -82,7 +81,7 @@ const BacklogEvent = ({ events, onDragStart, setEvents, onDrop }) => {
             className="priority-column"
             onDrop={(e) => handleDrop(e, priority.level)}
             onDragOver={(e) => e.preventDefault()}
-          >
+          >            
             <PriorityHeading priority={priority} />
             <div className="priority-column-inner">
               {priority.events.length === 0 ? (
@@ -120,7 +119,7 @@ const BacklogEvent = ({ events, onDragStart, setEvents, onDrop }) => {
                   </span>
                 }
                 
-                image={<WarningOutlined style={{ fontSize: 50, color: 'grey', marginBottom: "0px"}} />}
+                image={<PlusSquareOutlined style={{ fontSize: 50, color: 'grey', marginBottom: "0px"}} />}
               />
 
               ) : (

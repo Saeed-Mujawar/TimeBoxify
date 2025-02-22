@@ -63,10 +63,12 @@ const getPopoverContent = (level) => {
 };
 
 const PriorityHeading = ({ priority }) => (
+    
   <h4 className="priority-headings">
+    <p></p>
     {priority.level.toUpperCase()}
     <Popover content={getPopoverContent(priority.level)} title="Task Information">
-      <InfoCircleOutlined style={{ marginLeft: 8, color: "black", cursor: "pointer" }} />
+      <InfoCircleOutlined style={{ marginLeft: 8, color: "black", cursor: "pointer", alignItems: 'flex-start' }} />
     </Popover>
   </h4>
 );

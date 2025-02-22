@@ -9,6 +9,17 @@ import "./TaskCalendar.css";
 
 import CalendarTaskCard from "./CalendarTaskCard";
 
+// Get today's day of the week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+const today = new Date();
+const startOfWeekDay = today.getDay(); // Dynamically get today's day of the week
+
+// Set the start of the week to today's day
+moment.updateLocale('en', {
+  week: {
+    dow: startOfWeekDay, // Set the start of the week to today's day
+  },
+});
+
 const localizer = momentLocalizer(moment);
 const DnDCalendar = withDragAndDrop(Calendar);
 
@@ -152,13 +163,13 @@ const TaskCalendar = ({ backLogEvents, setBackLogEvents }) => {
     );
   };
 
-  const handleFormSubmit = (values) => {
+  const handleFormSubmit = (values, key) => {
     const { title, description, priority } = values;
 
     if (selectedEvent) {
       setEvents((prevEvents) =>
         prevEvents.map((evt) =>
-          evt.id === selectedEvent.id ? { ...evt, title, description, priority } : evt
+          evt.id === selectedEvent.id ? { ...evt, title, description, priority, key } : evt
         )
       );
       notification.success({
@@ -173,6 +184,7 @@ const TaskCalendar = ({ backLogEvents, setBackLogEvents }) => {
         title,
         description,
         priority,
+        key,
         taskDuration,
         id: Date.now(),
       };
@@ -331,7 +343,7 @@ const TaskCalendar = ({ backLogEvents, setBackLogEvents }) => {
         visible={showModal}
         onClose={() => setShowModal(false)}
         selectedEvent={selectedEvent}
-        onSubmit={(values) => handleFormSubmit(values)}
+        onSubmit={(values, key) => handleFormSubmit(values, key)}
         onDelete={handleEventDelete}
         onMoveToBacklog={handleBacklogTask}
       />
@@ -374,11 +386,6 @@ const TaskCalendar = ({ backLogEvents, setBackLogEvents }) => {
                   <strong>{moment(date).format("ddd, DD/MMM/YYYY")}</strong>
                 </div>
               ),
-            },
-          }}
-          formats={{
-            week: {
-              startOfWeek: "Monday", // Ensure Monday is the start of the week
             },
           }}
         />

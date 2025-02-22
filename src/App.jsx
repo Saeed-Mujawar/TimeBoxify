@@ -5,50 +5,61 @@ import TaskInput from "./components/TaskInput.jsx";
 import "./App.css";
 import BacklogEvent from "./components/BacklogEvent.jsx";
 import UnscheduledTask from "./components/UnscheduledTask.jsx";
-import TaskCard from "./components/TaskCard.jsx";
-import { Button } from "antd";
 import HomePage from "./components/HomePage.jsx";
 
 const App = () => {
-  const [isConnected, setIsConnected] = useState(false); // ✅ Track Google Calendar connection
+  const [isConnected, setIsConnected] = useState(() => localStorage.getItem("isConnected") === "true");
+  const [tokenClient, setTokenClient] = useState(null);
+  const [backLogEvents, setBackLogEvents] = useState(() => JSON.parse(localStorage.getItem("backlogEvents")) || []);
+  const [unscheduledEvents, setUnscheduledEvents] = useState(() => JSON.parse(localStorage.getItem("unscheduledEvents")) || []);
+  const [isDirected, setIsDirected] = useState(false);
 
-  // Load backlog events from localStorage on component mount
-  const [backLogEvents, setBackLogEvents] = useState(() => {
-    return JSON.parse(localStorage.getItem("backlogEvents")) || [];
-  });
-
-  // Load unscheduled events from localStorage
-  const [unscheduledEvents, setUnscheduledEvents] = useState(() => {
-    return JSON.parse(localStorage.getItem("unscheduledEvents")) || [];
-  });
-
-  // Save backlog events to localStorage whenever they change
   useEffect(() => {
-    localStorage.setItem("backlogEvents", JSON.stringify(backLogEvents));
-  }, [backLogEvents]);
+    const loadGoogleScript = () => {
+      const script = document.createElement("script");
+      script.src = "https://accounts.google.com/gsi/client";
+      script.async = true;
+      script.defer = true;
+      script.onload = initializeGoogleAuth;
+      document.body.appendChild(script);
+    };
 
+    const initializeGoogleAuth = () => {
+      if (!window.google?.accounts) return;
+      const client = window.google.accounts.oauth2.initTokenClient({
+        client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
+        scope: "https://www.googleapis.com/auth/calendar",
+        callback: (response) => {
+          if (response.access_token) {
+            console.log("User authenticated");
+            setIsConnected(true);
+            localStorage.setItem("isConnected", "true");
+          } else {
+            console.error("Google authentication failed");
+          }
+        },
+      });
+      setTokenClient(client);
+    };
 
-  // Save unscheduled events to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem("unscheduledEvents", JSON.stringify(unscheduledEvents));
-  }, [unscheduledEvents]);
+    !window.google ? loadGoogleScript() : initializeGoogleAuth();
+  }, []);
 
+  const handleGoogleConnect = () => {
+    if (!tokenClient) return console.error("Google API client not ready");
+    tokenClient.requestAccessToken();
+  };
 
-  // Function to add a task to backlog
   const handleAddTask = (newTask) => {
     setUnscheduledEvents((prev) => {
       const updatedEvents = [...prev, newTask];
       localStorage.setItem("unscheduledEvents", JSON.stringify(updatedEvents));
       return updatedEvents;
     });
-
   };
 
-
-  const handleGoogleConnect = () => {
-    // TODO: Add Google Calendar authentication logic here
-    console.log("Connecting to Google Calendar...");
-    setIsConnected(true);
+  const handleDirectStart = () => {
+    setIsDirected(true);
   };
 
   const onDragStart = (e, event) => {
@@ -57,35 +68,36 @@ const App = () => {
 
   const handleTaskMove = (taskId) => {
     setUnscheduledEvents((prev) => {
-      const updatedUnscheduledEvents = prev.filter((task) => task.id !== taskId);
-      localStorage.setItem("unscheduledEvents", JSON.stringify(updatedUnscheduledEvents));
-      return updatedUnscheduledEvents;
+      const updated = prev.filter((task) => task.id !== taskId);
+      localStorage.setItem("unscheduledEvents", JSON.stringify(updated));
+      return updated;
     });
+
     setBackLogEvents((prev) => {
-      const updatedBackLogEvents = prev.filter((event) => event.id !== taskId);
-      localStorage.setItem("backlogEvents", JSON.stringify(updatedBackLogEvents));
-      return updatedBackLogEvents;
+      const updated = prev.filter((event) => event.id !== taskId);
+      localStorage.setItem("backlogEvents", JSON.stringify(updated));
+      return updated;
     });
   };
 
-
-
+  const handleDisconnect = () => {
+    localStorage.removeItem("isConnected");
+    window.location.reload(); // Refresh page to reset state
+  };
 
   return (
     <div className="app">
-      <Navbar />
-      {!isConnected ? (
-        <>
-          <HomePage onConnect={handleGoogleConnect} />        
-        </>
-      ) : (
+      <Navbar onDisconnect={handleDisconnect} isConnected={isConnected}  />
+      {/* {!isConnected && !isDirected ? (
+        <HomePage onConnect={handleGoogleConnect} onDirect={handleDirectStart} />
+      ) : ( */}
         <>
           <TaskInput onAddTask={handleAddTask} />
           <UnscheduledTask tasks={unscheduledEvents} setTasks={setUnscheduledEvents} onDrop={handleTaskMove} />
           <BacklogEvent events={backLogEvents} setEvents={setBackLogEvents} onDragStart={onDragStart} onDrop={handleTaskMove} />
           <TaskCalendar backLogEvents={backLogEvents} setBackLogEvents={setBackLogEvents} />
         </>
-      )}
+      {/* )} */}
     </div>
   );
 };

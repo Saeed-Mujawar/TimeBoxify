@@ -1,10 +1,13 @@
-import React from 'react';
-import './Navbar.css'
+import React from "react";
+import "./Navbar.css";
 
-const Navbar = () => {
+const Navbar = ({isConnected, onDisconnect }) => {
   return (
     <nav className="navbar">
       <h1>Weekly Timeboxing & Prioritization</h1>
+      {isConnected && (
+      <button className="disconnect-btn" onClick={onDisconnect}>Disconnect With Google</button>
+      )}
     </nav>
   );
 };
